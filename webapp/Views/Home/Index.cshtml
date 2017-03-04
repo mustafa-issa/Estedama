@@ -157,27 +157,24 @@
                         <h2>Bar Chart</h2>
 
                     </header>
-                    
-                </div>
-
-                <div>
-                    @using (Html.BeginForm("Index", "Home"))
-                    {
-                        <div class="jarviswidget-editbox">
-                            <div class="widget-body">
-                                @Html.EnumDropDownListFor(m => m.barChartModel.period, "Period")
-                                <div class="tree smart-form">
-                                    <ul>
-                                        @Html.Raw(Helpers.FormTreeView(Model.PieModel.TreeRoot, "bar"))
-                                    </ul>
+                    <div>
+                        @using (Html.BeginForm("Index", "Home"))
+                        {
+                            <div class="jarviswidget-editbox">
+                                <div class="widget-body">
+                                    @Html.EnumDropDownListFor(m => m.barChartModel.period, "Period")
+                                    <div class="tree smart-form">
+                                        <ul>
+                                            @Html.Raw(Helpers.FormTreeView(Model.PieModel.TreeRoot, "bar"))
+                                        </ul>
+                                    </div>
                                 </div>
+                                <input type="submit" value="Show Pie" />
                             </div>
-                            <input type="submit" value="Show Pie" />
-                        </div>
-                    }
+                        }
 
-                    <div class="widget-body">
-                        @(Html.Highsoft().Highcharts(
+                        <div class="widget-body">
+                            @(Html.Highsoft().Highcharts(
                 new Highcharts
                 {
                     Title = new Title
@@ -226,11 +223,14 @@
                     Series = Model.barChartModel.Data
                 }
         , "chart")
-                        )
-                    </div>
-                    <!-- end widget content -->
+                            )
+                        </div>
+                        <!-- end widget content -->
 
+                    </div>
                 </div>
+
+                
 
 
 
@@ -257,11 +257,13 @@
 <!-- END MAIN CONTENT -->
 
 @section pagespecific {
-    <script type="text/javascript">
 
+    <script type="text/javascript">
+    
         $(document).ready(function () {
 
             // PAGE RELATED SCRIPTS
+            
 
             $('.tree > ul').attr('role', 'tree').find('ul').attr('role', 'group');
             $('.tree').find('li:has(ul)').addClass('parent_li').attr('role', 'treeitem').find(' > span').attr('title', 'Collapse this branch').on('click', function (e) {
