@@ -1,0 +1,78 @@
+﻿    <!-- Left panel : Navigation area -->
+<!-- Note: This width of the aside area can be adjusted through LESS variables -->
+<aside id="left-panel">
+
+    <!-- User info -->
+    @{ Html.RenderPartial("_CurrentUser"); }
+    <!-- end user info -->
+    <!-- NAVIGATION : This navigation is also responsive
+
+    To make this navigation dynamic please make sure to link the node
+    (the reference to the nav > ul) after page load. Or the navigation
+    will not initialize.
+    -->
+    <nav>
+        <!-- NOTE: Notice the gaps after each icon usage <i></i>..
+        Please note that these links work a bit different than
+        traditional href="" links. See documentation for details.
+        -->
+
+        <ul>
+            <li class="@Html.RouteIf("index", "active")">
+                <a href="#" title="Dashboard"><i class="fa fa-lg fa-fw fa-home"></i> <span class="menu-item-parent">Dashboard</span></a>
+                <ul>
+                    <li class="@Html.RouteIf("index", "active")">
+                        <a href="@Url.Action("index", "home")" title="Dashboard"><span class="menu-item-parent">Analytics Dashboard</span></a>
+                    </li>
+                </ul>
+            </li>
+            
+            <li class="@Html.RouteIf("inbox", "active")">
+                <a href="@Url.Action("inbox", "home")"><i class="fa fa-lg fa-fw fa-inbox"></i> <span class="menu-item-parent">Outlook</span><span class="badge pull-right inbox-badge margin-right-13">0</span></a>
+            </li>
+            <li class="@Html.RouteIf("graphs", "active")">
+                <a href="#"><i class="fa fa-lg fa-fw fa-bar-chart-o"></i> <span class="menu-item-parent">Graphs</span></a>
+                <ul>
+                    <li class="@Html.RouteIf("flot", "active")">
+                        <a href="@Url.Action("flot", "graphs")">Flot Charts</a>
+                    </li>
+                    <li class="@Html.RouteIf("morris", "active")">
+                        <a href="@Url.Action("morris", "graphs")">Morris Charts</a>
+                    </li>
+                    <li class="@Html.RouteIf("inline", "active")">
+                        <a href="@Url.Action("inline", "graphs")">Inline Charts</a>
+                    </li>
+                    <li class="@Html.RouteIf("dygraphs", "active")">
+                        <a href="@Url.Action("dygraphs", "graphs")">Dygraphs</a>
+                    </li>
+                    <li class="@Html.RouteIf("chartjs", "active")">
+                        <a href="@Url.Action("chartjs", "graphs")">Chart.js</a>
+                    </li>
+                    <li class="@Html.RouteIf("highcharts", "active")">
+                        <a href="@Url.Action("highcharts", "graphs")">HighchartTable <span class="badge pull-right inbox-badge bg-color-yellow">new</span></a>
+                    </li>
+                </ul>
+            </li>
+            <li class="@Html.RouteIf("tables", "active")">
+                <a href="#"><i class="fa fa-lg fa-fw fa-table"></i> <span class="menu-item-parent">Tables</span></a>
+                <ul>
+                    <li class="@Html.RouteIf("normal", "active")">
+                        <a href="@Url.Action("normal", "tables")">Normal Tables</a>
+                    </li>
+                    <li class="@Html.RouteIf("datatables", "active")">
+                        <a href="@Url.Action("datatables", "tables")">Data Tables <span class="badge inbox-badge bg-color-greenLight hidden-mobile">responsive</span></a>
+                    </li>
+                    <li class="@Html.RouteIf("jqgrid", "active")">
+                        <a href="@Url.Action("jqgrid", "tables")">Jquery Grid</a>
+                    </li>
+                </ul>
+            </li>
+
+        </ul>
+    </nav>
+    <span class="minifyme" data-action="minifyMenu">
+        <i class="fa fa-arrow-circle-left hit"></i>
+    </span>
+
+</aside>
+<!-- END NAVIGATION -->
