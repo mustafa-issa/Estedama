@@ -36,42 +36,42 @@
                     <div>
                         @using (Html.BeginForm("Index", "Home"))
                         {
-                            <div class="jarviswidget-editbox">
-                                <div class="widget-body">
-                                    <div class="row">
-                                        <div class="col-md-6 form-group">
-                                            @Html.EnumDropDownListFor(m => m.PieModel.period, "Period", new { @class = "form-control" , @id = "ddlPie" })
-                                        </div>
-                                    </div>
-                                    
-                                    <div class="row" id="divDatePie" style="display : none">
-                                        <div class="col-md-6 form-group">
-                                            <div class="input-group date form_datetime col-md-12" data-date-format="dd/mm/yyyy - HH:ii p" data-link-field="dtp_input1">
-                                                <input class="form-control" size="16" placeholder="From" type="text" value="" readonly>
-                                                <span class="input-group-addon"><span class="glyphicon glyphicon-remove"></span></span>
-                                                <span class="input-group-addon"><span class="icon-append fa fa-calendar"></span></span>
-                                            </div>
-                                            <input type="hidden" id="dtp_input1" value="" /><br />
-                                        </div>
-                                        <div class="col-md-6 form-group">
-                                            <div class="input-group date form_datetime col-md-12" data-date-format="dd/mm/yyyy - HH:ii p" data-link-field="dtp_input2">
-                                                <input class="form-control" size="16" placeholder="To" type="text" value="" readonly>
-                                                <span class="input-group-addon"><span class="glyphicon glyphicon-remove"></span></span>
-                                                <span class="input-group-addon"><span class="icon-append fa fa-calendar"></span></span>
-                                            </div>
-                                            <input type="hidden" id="dtp_input2" value="" /><br />
-                                        </div>
-                                    </div>
-                                
-                                    <div class="tree smart-form">
-                                        <ul>
-                                            @Html.Raw(Helpers.FormTreeView(Model.PieModel.TreeRoot, "pie"))
-                                        </ul>
+                        <div class="jarviswidget-editbox">
+                            <div class="widget-body">
+                                <div class="row">
+                                    <div class="col-md-6 form-group">
+                                        @Html.EnumDropDownListFor(m => m.PieModel.period, "Period", new { @class = "form-control" , @id = "ddlPie" })
                                     </div>
                                 </div>
-                                <input type="submit" value="Show Pie" />
-                                <!-- This area used as dropdown edit box -->
+
+                                <div class="row" id="divDatePie" style="display : none">
+                                    <div class="col-md-6 form-group">
+                                        <div class="input-group date form_datetime col-md-12" data-date-format="dd/mm/yyyy - HH:ii p" data-link-field="dtp_input1">
+                                            <input class="form-control" size="16" placeholder="From" type="text" value="" readonly>
+                                            <span class="input-group-addon"><span class="glyphicon glyphicon-remove"></span></span>
+                                            <span class="input-group-addon"><span class="icon-append fa fa-calendar"></span></span>
+                                        </div>
+                                        <input type="hidden" name="fromPie" id="dtp_input1" value="" /><br />
+                                    </div>
+                                    <div class="col-md-6 form-group">
+                                        <div class="input-group date form_datetime col-md-12" data-date-format="dd/mm/yyyy - HH:ii p" data-link-field="dtp_input2">
+                                            <input class="form-control" size="16" placeholder="To" type="text" value="" readonly>
+                                            <span class="input-group-addon"><span class="glyphicon glyphicon-remove"></span></span>
+                                            <span class="input-group-addon"><span class="icon-append fa fa-calendar"></span></span>
+                                        </div>
+                                        <input type="hidden" name="toPie" id="dtp_input2" value="" /><br />
+                                    </div>
+                                </div>
+
+                                <div class="tree smart-form">
+                                    <ul>
+                                        @Html.Raw(Helpers.FormTreeView(Model.PieModel.TreeRoot, "pie"))
+                                    </ul>
+                                </div>
                             </div>
+                            <input type="submit" value="Show Pie" />
+                            <!-- This area used as dropdown edit box -->
+                        </div>
                         }
 
                         <!-- widget edit box -->
@@ -81,7 +81,7 @@
                             <div>
                                 @if (Model.PieModel.Data != null)
                                 {
-                                    @(Html.Highsoft().Highcharts(
+                                @(Html.Highsoft().Highcharts(
                                 new Highcharts
                                 {
                                     Chart = new Highsoft.Web.Mvc.Charts.Chart
@@ -125,8 +125,8 @@
 
                                     }
                                 }
-                                , "chart")
-                                    )
+                                , "pieChart")
+                                )
                                 }
                             </div>
                         </div>
@@ -148,10 +148,10 @@
                         {
                             <div class="jarviswidget-editbox">
                                 <div class="widget-body">
-                                    @Html.EnumDropDownListFor(m => m.barChartModel.period, "Period")
+                                    @Html.EnumDropDownListFor(m => m.lineChartModel.period, "Period")
                                     <div class="tree smart-form">
                                         <ul>
-                                            @Html.Raw(Helpers.FormTreeView(Model.PieModel.TreeRoot, "bar"))
+                                            @Html.Raw(Helpers.FormTreeView(Model.lineChartModel.TreeRoot, "bar"))
                                         </ul>
                                     </div>
                                 </div>
@@ -160,6 +160,49 @@
                         }
 
                         <div class="widget-body">
+                            @if (Model.lineChartModel.Data != null)
+                            {
+                            @(Html.Highsoft().Highcharts(
+                                new Highcharts
+                                {
+                                    Title = new Title
+                                    {
+                                        Text = "Monthly Average Temperature"
+                                    },
+                                    XAxis = new List<XAxis>
+                                    {
+                                        new XAxis
+                                        {
+                                            Categories = Model.lineChartModel.Dates
+                                        }
+                                    },
+                                    YAxis = new List<YAxis>
+                                    {
+                                        new YAxis
+                                        {
+                                            Title = new YAxisTitle
+                                            {
+                                                Text = "Temperature (°C)"
+                                            }
+                                        }
+                                    },
+                                    PlotOptions = new PlotOptions
+                                    {
+                                        Line = new PlotOptionsLine
+                                        {
+                                            DataLabels = new PlotOptionsLineDataLabels
+                                            {
+                                                Enabled = true
+                                            },
+                                            EnableMouseTracking = false
+                                        }
+                                    },
+                                    Series = Model.lineChartModel.Data
+                                }
+                                , "lineChart")
+                            )
+                            }
+
                         </div>
                         <!-- end widget content -->
 
@@ -198,8 +241,10 @@
                         }
 
                         <div class="widget-body">
-                            @(Html.Highsoft().Highcharts(
-                new Highcharts
+                            @if (Model.barChartModel.Data != null)
+                            {
+                                @(Html.Highsoft().Highcharts(
+                new Highcharts()
                 {
                     Title = new Title
                     {
@@ -212,22 +257,22 @@
 
                     XAxis = new List<XAxis>
                     {
-                new XAxis
-                {
-                    Categories = Model.barChartModel.Dates
-                }
-                    },
+                        new XAxis
+                        {
+                            Categories = Model.barChartModel.Dates
+                        }
+                            },
                     YAxis = new List<YAxis>
-                    {
-                new YAxis
-                {
-                    Min = 0,
-                    Title = new YAxisTitle
-                    {
-                        Text = "Rainfall (mm)"
-                    }
-                }
-                    },
+                            {
+                        new YAxis
+                        {
+                            Min = 0,
+                            Title = new YAxisTitle
+                            {
+                                Text = "Rainfall (mm)"
+                            }
+                        }
+                            },
                     Tooltip = new Tooltip
                     {
                         HeaderFormat = "<span style='font-size:10px'>{point.key}</span><table style='font-size:12px'>",
@@ -246,15 +291,19 @@
                     },
                     Series = Model.barChartModel.Data
                 }
-        , "chart")
-                            )
+                , "barChart")
+                                )
+                            }
+
                         </div>
+
+                        
                         <!-- end widget content -->
 
                     </div>
                 </div>
 
-                
+
 
 
 
@@ -281,21 +330,19 @@
 <!-- END MAIN CONTENT -->
 
 @section pagespecific {
-<script src="~/Scripts/bootstrap-datetimepicker.min.js"></script>
+    <script src="~/Scripts/bootstrap-datetimepicker.min.js"></script>
 
     <script type="text/javascript">
         $('#ddlPie').change(function () {
-            if($('#ddlPie').val() == 5)
-            {
+            if ($('#ddlPie').val() == 5) {
                 $('#divDatePie').css('display', '');
             }
-            else
-            {
+            else {
                 $('#divDatePie').css('display', 'none');
             }
         });
         $(document).ready(function () {
-            
+
             // PAGE RELATED SCRIPTS
             $('.form_datetime').datetimepicker({
                 //language:  'fr',

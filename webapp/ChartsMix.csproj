@@ -247,6 +247,7 @@
     <Content Include="Content\ajax\notify\notifications.html" />
     <Content Include="Content\ajax\notify\tasks.html" />
     <Content Include="Content\ajax\website-template.html" />
+    <Content Include="Content\css\bootstrap-datetimepicker.min.css" />
     <Content Include="Content\css\bootstrap.min.css" />
     <Content Include="Content\css\demo.min.css" />
     <Content Include="Content\css\font-awesome.min.css" />
@@ -534,6 +535,7 @@
     <None Include="Properties\PublishProfiles\SmartAdmin - Debug.pubxml" />
     <Content Include="Scripts\app.config.js" />
     <Content Include="Scripts\app.min.js" />
+    <Content Include="Scripts\bootstrap-datetimepicker.min.js" />
     <Content Include="Scripts\bootstrap\bootstrap.min.js" />
     <Content Include="Scripts\demo.min.js" />
     <Content Include="Scripts\libs\jquery-2.1.1.min.js" />
@@ -1070,6 +1072,7 @@
     <Content Include="Views\Home\Index.cshtml" />
     <Content Include="Views\Charts\ColumnBasic.cshtml" />
     <Content Include="Views\Home\ColumnBasic.cshtml" />
+    <Content Include="Views\Home\LineLabels.cshtml" />
     <None Include="Web.Debug.config">
       <DependentUpon>Web.config</DependentUpon>
     </None>
@@ -1117,6 +1120,7 @@
     <Compile Include="Models\Enums.cs" />
     <Compile Include="Models\Helpers.cs" />
     <Compile Include="Models\JavaScriptConvert.cs" />
+    <Compile Include="Models\LineChartModel.cs" />
     <Compile Include="Models\Meter.cs" />
     <Compile Include="Models\Pie3DModel.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

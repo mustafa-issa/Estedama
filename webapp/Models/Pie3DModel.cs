@@ -1,6 +1,7 @@
 ﻿using System.Collections.Generic;
 using Highsoft.Web.Mvc.Charts;
 using System.Web.Mvc;
+using System;
 
 namespace ChartsMix.Models
 {
@@ -13,5 +14,6 @@ namespace ChartsMix.Models
         public Meter TreeRoot { get; set; }
         public List<PieSeriesData> Data { get; set; }
         public PiePeriod period { get; set; }
+        
     }
 }

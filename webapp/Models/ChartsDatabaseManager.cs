@@ -161,7 +161,7 @@ namespace ChartsMix.Models
             return server;
         }
 
-        public List<Series> GetBarChartMeters(int[] ids, DateTime fromDate, DateTime toDate, PiePeriod period, out List<string> dates)
+        public List<Series> GetBarChartMeters(int[] ids, DateTime fromDate, DateTime toDate, BarPeriod period, out List<string> dates)
         {
             var result = new List<Series>();
 
@@ -277,6 +277,58 @@ namespace ChartsMix.Models
             //{
             //    throw ex;
             //}
+            return result;
+        }
+
+        public List<Series> GetLineChartMeters(int[] ids, DateTime fromDate, DateTime toDate, BarPeriod period, out List<string> dates)
+        {
+            var result = new List<Series>();
+
+            List<double> tokyoValues = new List<double> { 49.9, 71.5, 106.4, 129.2, 144.0, 176.0, 135.6, 148.5, 216.4, 194.1, 95.6, 54.4 };
+            List<double> nyValues = new List<double> { 83.6, 78.8, 98.5, 93.4, 106.0, 84.5, 105.0, 104.3, 91.2, 83.5, 106.6, 92.3 };
+            List<double> berlinValues = new List<double> { 42.4, 33.2, 34.5, 39.7, 52.6, 75.5, 57.4, 60.4, 47.6, 39.1, 46.8, 51.1 };
+            List<double> londonValues = new List<double> { 48.9, 38.8, 39.3, 41.4, 47.0, 48.3, 59.0, 59.6, 52.4, 65.2, 59.3, 51.2 };
+            List<LineSeriesData> tokyoData = new List<LineSeriesData>();
+            List<LineSeriesData> nyData = new List<LineSeriesData>();
+            List<LineSeriesData> berlinData = new List<LineSeriesData>();
+            List<LineSeriesData> londonData = new List<LineSeriesData>();
+
+            tokyoValues.ForEach(p => tokyoData.Add(new LineSeriesData { Y = p }));
+            nyValues.ForEach(p => nyData.Add(new LineSeriesData { Y = p }));
+            berlinValues.ForEach(p => berlinData.Add(new LineSeriesData { Y = p }));
+            londonValues.ForEach(p => londonData.Add(new LineSeriesData { Y = p }));
+            result = new List<Series>
+            {
+                new LineSeries
+            {
+                Name = "Tokyo",
+                Data = tokyoData
+            },
+            new LineSeries
+            {
+                Name = "London",
+                Data = londonData
+            }
+
+               
+            };
+
+            dates = new List<string> {
+                        "1",
+                        "2",
+                        "Mar",
+                        "Apr",
+                        "May",
+                        "Jun",
+                        "Jul",
+                        "Aug",
+                        "Sep",
+                        "Oct",
+                        "Nov",
+                        "Dec"
+                    };
+
+           
             return result;
         }
     }
