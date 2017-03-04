@@ -38,7 +38,31 @@
                         {
                             <div class="jarviswidget-editbox">
                                 <div class="widget-body">
-                                    @Html.EnumDropDownListFor(m=>m.PieModel.period,"Period")
+                                    <div class="row">
+                                        <div class="col-md-6 form-group">
+                                            @Html.EnumDropDownListFor(m => m.PieModel.period, "Period", new { @class = "form-control" , @id = "ddlPie" })
+                                        </div>
+                                    </div>
+                                    
+                                    <div class="row" id="divDatePie" style="display : none">
+                                        <div class="col-md-6 form-group">
+                                            <div class="input-group date form_datetime col-md-12" data-date-format="dd/mm/yyyy - HH:ii p" data-link-field="dtp_input1">
+                                                <input class="form-control" size="16" placeholder="From" type="text" value="" readonly>
+                                                <span class="input-group-addon"><span class="glyphicon glyphicon-remove"></span></span>
+                                                <span class="input-group-addon"><span class="icon-append fa fa-calendar"></span></span>
+                                            </div>
+                                            <input type="hidden" id="dtp_input1" value="" /><br />
+                                        </div>
+                                        <div class="col-md-6 form-group">
+                                            <div class="input-group date form_datetime col-md-12" data-date-format="dd/mm/yyyy - HH:ii p" data-link-field="dtp_input2">
+                                                <input class="form-control" size="16" placeholder="To" type="text" value="" readonly>
+                                                <span class="input-group-addon"><span class="glyphicon glyphicon-remove"></span></span>
+                                                <span class="input-group-addon"><span class="icon-append fa fa-calendar"></span></span>
+                                            </div>
+                                            <input type="hidden" id="dtp_input2" value="" /><br />
+                                        </div>
+                                    </div>
+                                
                                     <div class="tree smart-form">
                                         <ul>
                                             @Html.Raw(Helpers.FormTreeView(Model.PieModel.TreeRoot, "pie"))
@@ -257,13 +281,32 @@
 <!-- END MAIN CONTENT -->
 
 @section pagespecific {
+<script src="~/Scripts/bootstrap-datetimepicker.min.js"></script>
 
     <script type="text/javascript">
-    
+        $('#ddlPie').change(function () {
+            if($('#ddlPie').val() == 5)
+            {
+                $('#divDatePie').css('display', '');
+            }
+            else
+            {
+                $('#divDatePie').css('display', 'none');
+            }
+        });
         $(document).ready(function () {
-
-            // PAGE RELATED SCRIPTS
             
+            // PAGE RELATED SCRIPTS
+            $('.form_datetime').datetimepicker({
+                //language:  'fr',
+                weekStart: 1,
+                todayBtn: 1,
+                autoclose: 1,
+                todayHighlight: 1,
+                startView: 2,
+                forceParse: 0,
+                showMeridian: 1
+            });
 
             $('.tree > ul').attr('role', 'tree').find('ul').attr('role', 'group');
             $('.tree').find('li:has(ul)').addClass('parent_li').attr('role', 'treeitem').find(' > span').attr('title', 'Collapse this branch').on('click', function (e) {
