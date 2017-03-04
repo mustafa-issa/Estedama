@@ -18,11 +18,7 @@ namespace ChartsMix.Controllers
             db = new Models.ChartsDatabaseManager();
             var model = new DashbordModel();
             PrepareChartsModel(model);
-            
             return View(model);
-
-            
-            
         }
 
         public ActionResult LineLabels()
@@ -52,32 +48,28 @@ namespace ChartsMix.Controllers
         }
 
         [HttpPost]
-        public ActionResult Index(DashbordModel model, int[] pieIds, int[] barIds, int[] lineIds)
+        public ActionResult Index(DashbordModel model, int[] pieIds)
         {
             PrepareChartsModel(model);
 
-            //if (pieIds != null && pieIds.Length > 0)
-            //{
-            //    model.PieModel.Data = new ChartsDatabaseManager().GetPieChartMeters(pieIds,DateTime.MinValue,DateTime.MaxValue,model.PieModel.period);
-            //}
-            List<string> dates;
-            //if (barIds != null && barIds.Length > 0)
-            //{
-                model.barChartModel.Data = new ChartsDatabaseManager().GetBarChartMeters(barIds, DateTime.MinValue, DateTime.MaxValue, model.barChartModel.period, out dates);
-            //}
-            model.barChartModel.Dates = dates;
-            model.lineChartModel.Data = new ChartsDatabaseManager().GetLineChartMeters(lineIds, DateTime.MinValue, DateTime.MaxValue, model.lineChartModel.period, out dates);
-
-            model.lineChartModel.Dates = dates;
-
-            //if (compIds != null && compIds.Length > 0)
-            //{
-            //    model.PieModel.Data = new ChartsDatabaseManager().GetPieChartMeters(compIds);
-            //}
+            if (pieIds != null && pieIds.Length > 0)
+            {
+                model.PieModel.Data = new ChartsDatabaseManager().GetPieChartMeters(pieIds, model.PieModel.From, model.PieModel.To, model.PieModel.period);
+            }
 
             //if (lineIds != null && lineIds.Length > 0)
             //{
             //    model.PieModel.Data = new ChartsDatabaseManager().GetPieChartMeters(lineIds);
+            //}
+
+            //if (columnIds != null && columnIds.Length > 0)
+            //{
+            //    model.PieModel.Data = new ChartsDatabaseManager().GetPieChartMeters(columnIds);
+            //}
+
+            //if (compIds != null && compIds.Length > 0)
+            //{
+            //    model.PieModel.Data = new ChartsDatabaseManager().GetPieChartMeters(compIds);
             //}
             return View(model);
         }

@@ -43,32 +43,31 @@ namespace ChartsMix.Models
                     switch (period)
                     {
                         case PiePeriod.Day:
-                            fromDate = DateTime.Now;
-                            fromDate.AddDays(-1);
-                            fromDate.AddSeconds(-fromDate.Second);
+                            fromDate = new DateTime(DateTime.Now.Year, DateTime.Now.Month, DateTime.Now.Day, 12, 0, 0);
+                            fromDate = fromDate.AddSeconds(-fromDate.Second);
                             toDate = DateTime.Now;
                             break;
                         case PiePeriod.Week:
                             fromDate = DateTime.Now;
-                            fromDate.AddDays(-7);
-                            fromDate.AddSeconds(-fromDate.Second);
+                            fromDate = fromDate.AddDays(-7);
+                            fromDate = fromDate.AddSeconds(-fromDate.Second);
                             toDate = DateTime.Now;
                             break;
                         case PiePeriod.Month:
                             fromDate = DateTime.Now;
-                            fromDate.AddMonths(-1);
-                            fromDate.AddSeconds(-fromDate.Second);
+                            fromDate = fromDate.AddMonths(-1);
+                            fromDate = fromDate.AddSeconds(-fromDate.Second);
                             toDate = DateTime.Now;
                             break;
                         case PiePeriod.Year:
                             fromDate = DateTime.Now;
-                            fromDate.AddYears(-1);
-                            fromDate.AddSeconds(-fromDate.Second);
+                            fromDate = fromDate.AddYears(-1);
+                            fromDate = fromDate.AddSeconds(-fromDate.Second);
                             toDate = DateTime.Now;
                             break;
                         case PiePeriod.Custom:
-                            fromDate.AddSeconds(-fromDate.Second);
-                            toDate.AddSeconds(59 - toDate.Second);
+                            fromDate = fromDate.AddSeconds(-fromDate.Second);
+                            toDate = toDate.AddSeconds(59 - toDate.Second);
                             break;
                     }
                     command.Parameters.Add(new SqlParameter("@From", fromDate));

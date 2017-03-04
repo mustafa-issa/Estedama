@@ -4,16 +4,14 @@
 <script src="http://code.highcharts.com/highcharts.js"></script>
 <script src="http://code.highcharts.com/highcharts-3d.js"></script>
 <script src="https://code.highcharts.com/modules/exporting.js"></script>
+
 <!-- MAIN CONTENT -->
 <div id="content">
-
     <!-- row -->
     <div class="row">
-
         <!-- col -->
         <div class="col-xs-12 col-sm-7 col-md-7 col-lg-4">
             <h1 class="page-title txt-color-blueDark">
-
                 <!-- PAGE HEADER -->
                 <i class="fa fa-fw fa-bar-chart-o"></i>
                 Graph
@@ -26,101 +24,20 @@
     </div>
     <section id="widget-grid" class="">
 
-
+        <!--Pie Chart-->
         <div class="row">
-            <article class="col-xs-12 col-sm-6 col-md-12 col-lg-12">
+            <article class="col-md-6">
                 <div class="jarviswidget" id="wid-id-6">
                     <header>
-
                         <h2>Pie Chart </h2>
-
                     </header>
-
-                    <!-- widget div-->
-                    <div>
-                        @using (Html.BeginForm("Index", "Home"))
-                        {
-                            <div class="jarviswidget-editbox">
-                                <div class="widget-body">
-                                    <div class="tree smart-form">
-                                        <ul>
-                                            @Html.Raw(Helpers.FormTreeView(Model.PieModel.TreeRoot, "pie"))
-                                        </ul>
-                                    </div>
-                                </div>
-                                <input type="submit" value="Show Pie" />
-                                <!-- This area used as dropdown edit box -->
-                            </div>
-                        }
-
-                        <!-- widget edit box -->
-                        <!-- end widget edit box -->
-                        <!-- widget content -->
-                        <div class="widget-body">
-                            <div>
-                                @if (Model.PieModel.Data != null)
-                                {
-                                    @(Html.Highsoft().Highcharts(
-                                new Highcharts
-                                {
-                                    Chart = new Highsoft.Web.Mvc.Charts.Chart
-                                    {
-                                        Options3d = new ChartOptions3d
-                                        {
-                                            Enabled = true,
-                                            Alpha = 45,
-                                            Beta = 0
-                                        }
-                                    },
-                                    Title = new Title
-                                    {
-                                        Text = DateTime.Now.ToShortDateString()
-                                    },
-                                    Tooltip = new Tooltip
-                                    {
-                                        PointFormat = "{series.name}: <b>{point.percentage:.1f}%</b>"
-                                    },
-                                    PlotOptions = new PlotOptions
-                                    {
-                                        Pie = new PlotOptionsPie
-                                        {
-                                            AllowPointSelect = true,
-                                            Cursor = PlotOptionsPieCursor.Pointer,
-                                            Depth = 35,
-                                            DataLabels = new PlotOptionsPieDataLabels
-                                            {
-                                                Enabled = true,
-                                                Format = "<b>{point.name}</b>"
-                                            }
-                                        }
-                                    },
-                                    Series = new List<Series>
-                                    {
-                                    new PieSeries
-                                    {
-                                        Name = "Browser Share",
-                                        Data = Model.PieModel.Data
-                                    },
-
-                                    }
-                                }
-                                , "chart")
-                                    )
-                                }
-                            </div>
-                        </div>
-                        <!-- end widget content -->
-
-                    </div>
-                    <!-- end widget div -->
-
+                    @Html.Partial("_Pie3D", Model.PieModel, new ViewDataDictionary { TemplateInfo = new TemplateInfo { HtmlFieldPrefix = "PieModel" } })
                 </div>
-                <!-- end widget -->
-
             </article>
-            <!-- WIDGET END -->
-
         </div>
+        <!--End Pie Chart-->
+
+
         <div class="row">
 
             <!-- NEW WIDGET START -->
@@ -215,3 +132,4 @@
 
     </script>
 }
+

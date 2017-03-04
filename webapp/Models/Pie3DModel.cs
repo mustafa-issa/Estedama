@@ -14,6 +14,7 @@ namespace ChartsMix.Models
         public Meter TreeRoot { get; set; }
         public List<PieSeriesData> Data { get; set; }
         public PiePeriod period { get; set; }
-        
+        public DateTime From { get; set; }
+        public DateTime To { get; set; }
     }
 }

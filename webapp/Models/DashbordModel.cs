@@ -12,7 +12,5 @@ namespace ChartsMix.Models
         public Pie3DModel PieModel { get; set; }
         public BarChartModel barChartModel { get; set; }
         public LineChartModel lineChartModel { get; set; }
-        public DateTime fromPie { get; set; }
-        public DateTime toPie { get; set; }
     }
 }
