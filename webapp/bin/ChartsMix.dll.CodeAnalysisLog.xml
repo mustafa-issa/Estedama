@@ -12,15 +12,22 @@
          <Members>
           <Member Name="#GetAllMeters()" Kind="Method" Static="False" Accessibility="Public" ExternallyVisible="True">
            <Messages>
-            <Message TypeName="RethrowToPreserveStackDetails" Category="Microsoft.Usage" CheckId="CA2200" Status="Active" Created="2017-03-04 19:37:46Z" FixCategory="NonBreaking">
-             <Issue Certainty="95" Level="Error" Path="C:\Users\loay\Source\Repos\ChartMix\webapp\Models" File="ChartsDatabaseManager.cs" Line="130">'ChartsDatabaseManager.GetAllMeters()' rethrows a caught exception and specifies it explicitly as an argument. Use 'throw' without an argument instead, in order to preserve the stack location where the exception was initially raised.</Issue>
+            <Message TypeName="RethrowToPreserveStackDetails" Category="Microsoft.Usage" CheckId="CA2200" Status="Active" Created="2017-03-06 18:44:13Z" FixCategory="NonBreaking">
+             <Issue Certainty="95" Level="Error" Path="C:\Users\loay\Source\Repos\ChartMix\webapp\Models" File="ChartsDatabaseManager.cs" Line="129">'ChartsDatabaseManager.GetAllMeters()' rethrows a caught exception and specifies it explicitly as an argument. Use 'throw' without an argument instead, in order to preserve the stack location where the exception was initially raised.</Issue>
             </Message>
            </Messages>
           </Member>
           <Member Name="#GetPieChartMeters(System.Int32[],System.DateTime,System.DateTime,ChartsMix.Models.PiePeriod)" Kind="Method" Static="False" Accessibility="Public" ExternallyVisible="True">
            <Messages>
-            <Message TypeName="RethrowToPreserveStackDetails" Category="Microsoft.Usage" CheckId="CA2200" Status="Active" Created="2017-03-04 19:37:46Z" FixCategory="NonBreaking">
-             <Issue Certainty="95" Level="Error" Path="C:\Users\loay\Source\Repos\ChartMix\webapp\Models" File="ChartsDatabaseManager.cs" Line="93">'ChartsDatabaseManager.GetPieChartMeters(int[], DateTime, DateTime, PiePeriod)' rethrows a caught exception and specifies it explicitly as an argument. Use 'throw' without an argument instead, in order to preserve the stack location where the exception was initially raised.</Issue>
+            <Message TypeName="RethrowToPreserveStackDetails" Category="Microsoft.Usage" CheckId="CA2200" Status="Active" Created="2017-03-06 18:44:13Z" FixCategory="NonBreaking">
+             <Issue Certainty="95" Level="Error" Path="C:\Users\loay\Source\Repos\ChartMix\webapp\Models" File="ChartsDatabaseManager.cs" Line="92">'ChartsDatabaseManager.GetPieChartMeters(int[], DateTime, DateTime, PiePeriod)' rethrows a caught exception and specifies it explicitly as an argument. Use 'throw' without an argument instead, in order to preserve the stack location where the exception was initially raised.</Issue>
+            </Message>
+           </Messages>
+          </Member>
+          <Member Name="#HandleLineChartByYear(System.Collections.Generic.List`1&lt;System.String&gt;&amp;,System.Int32[])" Kind="Method" Static="False" Accessibility="Private" ExternallyVisible="False">
+           <Messages>
+            <Message TypeName="RethrowToPreserveStackDetails" Category="Microsoft.Usage" CheckId="CA2200" Status="Active" Created="2017-03-06 18:44:13Z" FixCategory="NonBreaking">
+             <Issue Certainty="95" Level="Error" Path="C:\Users\loay\Source\Repos\ChartMix\webapp\Models" File="ChartsDatabaseManager.cs" Line="301">'ChartsDatabaseManager.HandleLineChartByYear(out List&lt;string&gt;, params int[])' rethrows a caught exception and specifies it explicitly as an argument. Use 'throw' without an argument instead, in order to preserve the stack location where the exception was initially raised.</Issue>
             </Message>
            </Messages>
           </Member>
@@ -30,7 +37,7 @@
          <Members>
           <Member Name="#SerializeObject(System.Object)" Kind="Method" Static="True" Accessibility="Public" ExternallyVisible="True">
            <Messages>
-            <Message TypeName="Do not dispose objects multiple times" Category="Microsoft.Usage" CheckId="CA2202" Status="Active" Created="2017-03-04 19:37:46Z" FixCategory="DependsOnFix">
+            <Message TypeName="Do not dispose objects multiple times" Category="Microsoft.Usage" CheckId="CA2202" Status="Active" Created="2017-03-06 18:44:13Z" FixCategory="DependsOnFix">
              <Issue Certainty="75" Level="Warning" Path="C:\Users\loay\Source\Repos\ChartMix\webapp\Models" File="JavaScriptConvert.cs" Line="19">Object 'stringWriter' can be disposed more than once in method 'JavaScriptConvert.SerializeObject(object)'. To avoid generating a System.ObjectDisposedException you should not call Dispose more than one time on an object.: Lines: 19</Issue>
             </Message>
            </Messages>
@@ -41,7 +48,7 @@
          <Members>
           <Member Name="#.ctor()" Kind="Method" Static="False" Accessibility="Public" ExternallyVisible="True">
            <Messages>
-            <Message TypeName="DoNotCallOverridableMethodsInConstructors" Category="Microsoft.Usage" CheckId="CA2214" Status="Active" Created="2017-03-04 19:37:46Z" FixCategory="NonBreaking">
+            <Message TypeName="DoNotCallOverridableMethodsInConstructors" Category="Microsoft.Usage" CheckId="CA2214" Status="Active" Created="2017-03-06 18:44:13Z" FixCategory="NonBreaking">
              <Issue Certainty="95" Level="CriticalWarning" Path="C:\Users\loay\Source\Repos\ChartMix\webapp\Models" File="Meter.cs" Line="8">'Meter.Meter()' contains a call chain that results in a call to a virtual method defined by the class. Review the following call stack for unintended consequences: &#xD;&#xA;&#xD;&#xA;Meter..ctor()&#xD;&#xA;Meter.set_Children(List&lt;Meter&gt;):Void</Issue>
             </Message>
            </Messages>

@@ -161,3 +161,4 @@ C:\Users\loay\Source\Repos\ChartMix\webapp\bin\System.Web.WebPages.Deployment.xm
 C:\Users\loay\Source\Repos\ChartMix\webapp\bin\System.Web.WebPages.Razor.xml
 C:\Users\loay\Source\Repos\ChartMix\webapp\obj\Debug\ChartsMix.dll
 C:\Users\loay\Source\Repos\ChartMix\webapp\obj\Debug\ChartsMix.pdb
+C:\Users\loay\Source\Repos\ChartMix\webapp\bin\Newtonsoft.Json.xml
