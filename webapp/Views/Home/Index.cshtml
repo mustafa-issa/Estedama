@@ -4,308 +4,63 @@
 <script src="http://code.highcharts.com/highcharts.js"></script>
 <script src="http://code.highcharts.com/highcharts-3d.js"></script>
 <script src="https://code.highcharts.com/modules/exporting.js"></script>
+
 <!-- MAIN CONTENT -->
 <div id="content">
-
     <!-- row -->
     <div class="row">
-
         <!-- col -->
         <div class="col-xs-12 col-sm-7 col-md-7 col-lg-4">
             <h1 class="page-title txt-color-blueDark">
-
                 <!-- PAGE HEADER -->
                 <i class="fa fa-fw fa-bar-chart-o"></i>
                 Graph
                 <span>
                     >
-                    Charts Mix
+                    Chart.js
                 </span>
             </h1>
         </div>
     </div>
     <section id="widget-grid" class="">
+
+        <!--Pie Chart-->
         <div class="row">
             <article class="col-xs-12 col-sm-6 col-md-6 col-lg-6">
                 <div class="jarviswidget" id="wid-id-1">
                     <header>
-                        <span class="widget-icon"> <i class="fa easy-pie-chart"></i> </span>
                         <h2>Pie Chart </h2>
-
                     </header>
-                    <div>
-                        @using (Html.BeginForm("Index", "Home"))
-                        {
-                        <div class="jarviswidget-editbox">
-                            <div class="widget-body">
-                                <div class="row">
-                                    <div class="col-md-6 form-group">
-                                        @Html.EnumDropDownListFor(m => m.PieModel.period, "Period", new { @class = "form-control" , @id = "ddlPie" })
-                                    </div>
-                                </div>
-
-                                <div class="row" id="divDatePie" style="display : none">
-                                    <div class="col-md-6 form-group">
-                                        <div class="input-group date form_datetime col-md-12" data-date-format="dd/mm/yyyy - HH:ii p" data-link-field="dtp_input1">
-                                            <input class="form-control" size="16" placeholder="From" type="text" value="" readonly>
-                                            <span class="input-group-addon"><span class="glyphicon glyphicon-remove"></span></span>
-                                            <span class="input-group-addon"><span class="icon-append fa fa-calendar"></span></span>
-                                        </div>
-                                        <input type="hidden" name="fromPie" id="dtp_input1" value="" /><br />
-                                    </div>
-                                    <div class="col-md-6 form-group">
-                                        <div class="input-group date form_datetime col-md-12" data-date-format="dd/mm/yyyy - HH:ii p" data-link-field="dtp_input2">
-                                            <input class="form-control" size="16" placeholder="To" type="text" value="" readonly>
-                                            <span class="input-group-addon"><span class="glyphicon glyphicon-remove"></span></span>
-                                            <span class="input-group-addon"><span class="icon-append fa fa-calendar"></span></span>
-                                        </div>
-                                        <input type="hidden" name="toPie" id="dtp_input2" value="" /><br />
-                                    </div>
-                                </div>
-
-                                <div class="tree smart-form">
-                                    <ul>
-                                        @Html.Raw(Helpers.FormTreeView(Model.PieModel.TreeRoot, "pie"))
-                                    </ul>
-                                </div>
-                            </div>
-                            <input type="submit" value="Show Pie" />
-                            <!-- This area used as dropdown edit box -->
-                        </div>
-                        }
-
-                        <!-- widget edit box -->
-                        <!-- end widget edit box -->
-                        <!-- widget content -->
-                        <div class="widget-body">
-                            <div>
-                                @if (Model.PieModel.Data != null)
-                                {
-                                @(Html.Highsoft().Highcharts(
-                                new Highcharts
-                                {
-                                    Chart = new Highsoft.Web.Mvc.Charts.Chart
-                                    {
-                                        Options3d = new ChartOptions3d
-                                        {
-                                            Enabled = true,
-                                            Alpha = 45,
-                                            Beta = 0
-                                        }
-                                    },
-                                    Title = new Title
-                                    {
-                                        Text = DateTime.Now.ToShortDateString()
-                                    },
-                                    Tooltip = new Tooltip
-                                    {
-                                        PointFormat = "{series.name}: <b>{point.percentage:.1f}%</b>"
-                                    },
-                                    PlotOptions = new PlotOptions
-                                    {
-                                        Pie = new PlotOptionsPie
-                                        {
-                                            AllowPointSelect = true,
-                                            Cursor = PlotOptionsPieCursor.Pointer,
-                                            Depth = 35,
-                                            DataLabels = new PlotOptionsPieDataLabels
-                                            {
-                                                Enabled = true,
-                                                Format = "<b>{point.name}</b>"
-                                            }
-                                        }
-                                    },
-                                    Series = new List<Series>
-                                    {
-                                    new PieSeries
-                                    {
-                                        Name = "Browser Share",
-                                        Data = Model.PieModel.Data
-                                    },
-
-                                    }
-                                }
-                                , "pieChart")
-                                )
-                                }
-                            </div>
-                        </div>
-                        <!-- end widget content -->
-
-                    </div>
-                    <!-- end widget div -->
+                    @Html.Partial("_Pie3D", Model.PieModel, new ViewDataDictionary { TemplateInfo = new TemplateInfo { HtmlFieldPrefix = "PieModel" } })
                 </div>
             </article>
+
             <article class="col-xs-12 col-sm-6 col-md-6 col-lg-6">
                 <div class="jarviswidget" id="wid-id-2">
                     <header>
                         <h2>Line chart  </h2>
                     </header>
-
-                    <!-- widget div-->
-                    <div>
-                        @using (Html.BeginForm("Index", "Home"))
-                        {
-                            <div class="jarviswidget-editbox">
-                                <div class="widget-body">
-                                    @Html.EnumDropDownListFor(m => m.lineChartModel.period, "Period")
-                                    <div class="tree smart-form">
-                                        <ul>
-                                            @Html.Raw(Helpers.FormTreeView(Model.lineChartModel.TreeRoot, "bar"))
-                                        </ul>
-                                    </div>
-                                </div>
-                                <input type="submit" value="Show Pie" />
-                            </div>
-                        }
-
-                        <div class="widget-body">
-                            @if (Model.lineChartModel.Data != null)
-                            {
-                            @(Html.Highsoft().Highcharts(
-                                new Highcharts
-                                {
-                                    Title = new Title
-                                    {
-                                        Text = "Monthly Average Temperature"
-                                    },
-                                    XAxis = new List<XAxis>
-                                    {
-                                        new XAxis
-                                        {
-                                            Categories = Model.lineChartModel.Dates
-                                        }
-                                    },
-                                    YAxis = new List<YAxis>
-                                    {
-                                        new YAxis
-                                        {
-                                            Title = new YAxisTitle
-                                            {
-                                                Text = "Temperature (°C)"
-                                            }
-                                        }
-                                    },
-                                    PlotOptions = new PlotOptions
-                                    {
-                                        Line = new PlotOptionsLine
-                                        {
-                                            DataLabels = new PlotOptionsLineDataLabels
-                                            {
-                                                Enabled = true
-                                            },
-                                            EnableMouseTracking = false
-                                        }
-                                    },
-                                    Series = Model.lineChartModel.Data
-                                }
-                                , "lineChart")
-                            )
-                            }
-
-                        </div>
-                        <!-- end widget content -->
-
-                    </div>
-                    <!-- end widget div -->
-
+                    @Html.Partial("_LineChart", Model.lineChartModel, new ViewDataDictionary { TemplateInfo = new TemplateInfo { HtmlFieldPrefix = "lineChartModel" } })
                 </div>
             </article>
         </div>
+        <!--End Pie Chart-->
+
+
         <div class="row">
 
             <!-- NEW WIDGET START -->
             <article class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
-
-                <!-- Widget ID (each widget will need unique ID)-->
                 <div class="jarviswidget" id="wid-id-3">
                     <header>
                         <span class="widget-icon"> <i class="fa fa-bar-chart-o"></i> </span>
                         <h2>Bar Chart</h2>
 
                     </header>
-                    <div>
-                        @using (Html.BeginForm("Index", "Home"))
-                        {
-                            <div class="jarviswidget-editbox">
-                                <div class="widget-body">
-                                    @Html.EnumDropDownListFor(m => m.barChartModel.period, "Period")
-                                    <div class="tree smart-form">
-                                        <ul>
-                                            @Html.Raw(Helpers.FormTreeView(Model.PieModel.TreeRoot, "bar"))
-                                        </ul>
-                                    </div>
-                                </div>
-                                <input type="submit" value="Show Pie" />
-                            </div>
-                        }
+                    @Html.Partial("_BarChart", Model.barChartModel, new ViewDataDictionary { TemplateInfo = new TemplateInfo { HtmlFieldPrefix = "barChartModel" } })
 
-                        <div class="widget-body">
-                            @if (Model.barChartModel.Data != null)
-                            {
-                                @(Html.Highsoft().Highcharts(
-                new Highcharts()
-                {
-                    Title = new Title
-                    {
-                        Text = "Monthly Average Rainfall"
-                    },
-                    Subtitle = new Subtitle
-                    {
-                        Text = "Source: WorldClimate.com"
-                    },
-
-                    XAxis = new List<XAxis>
-                    {
-                        new XAxis
-                        {
-                            Categories = Model.barChartModel.Dates
-                        }
-                            },
-                    YAxis = new List<YAxis>
-                            {
-                        new YAxis
-                        {
-                            Min = 0,
-                            Title = new YAxisTitle
-                            {
-                                Text = "Rainfall (mm)"
-                            }
-                        }
-                            },
-                    Tooltip = new Tooltip
-                    {
-                        HeaderFormat = "<span style='font-size:10px'>{point.key}</span><table style='font-size:12px'>",
-                        PointFormat = "<tr><td style='color:{series.color};padding:0'>{series.name}: </td><td style='padding:0'><b>{point.y:.1f}&nbsp;mm</b></td></tr>",
-                        FooterFormat = "</table>",
-                        Shared = true,
-                        UseHTML = true
-                    },
-                    PlotOptions = new PlotOptions
-                    {
-                        Column = new PlotOptionsColumn
-                        {
-                            PointPadding = 0.2,
-                            BorderWidth = 0
-                        }
-                    },
-                    Series = Model.barChartModel.Data
-                }
-                , "barChart")
-                                )
-                            }
-
-                        </div>
-
-                        
-                        <!-- end widget content -->
-
-                    </div>
                 </div>
-
-
-
-
+                <!-- end widget -->
 
             </article>
             <!-- WIDGET END -->
@@ -330,8 +85,7 @@
 <!-- END MAIN CONTENT -->
 
 @section pagespecific {
-    <script src="~/Scripts/bootstrap-datetimepicker.min.js"></script>
-
+<script src="~/Scripts/bootstrap-datetimepicker.min.js"></script>
     <script type="text/javascript">
         $('#ddlPie').change(function () {
             if ($('#ddlPie').val() == 5) {
@@ -341,9 +95,26 @@
                 $('#divDatePie').css('display', 'none');
             }
         });
-        $(document).ready(function () {
 
-            // PAGE RELATED SCRIPTS
+        $('#ddlBar').change(function () {
+            if ($('#ddlBar').val() == 4) {
+                $('#divDateBar').css('display', '');
+            }
+            else {
+                $('#divDateBar').css('display', 'none');
+            }
+        });
+
+        $('#ddlLine').change(function () {
+            if ($('#ddlLine').val() == 4) {
+                $('#divDateLine').css('display', '');
+            }
+            else {
+                $('#divDateLine').css('display', 'none');
+            }
+        });
+
+        $(document).ready(function () {
             $('.form_datetime').datetimepicker({
                 //language:  'fr',
                 weekStart: 1,
@@ -354,6 +125,7 @@
                 forceParse: 0,
                 showMeridian: 1
             });
+            // PAGE RELATED SCRIPTS
 
             $('.tree > ul').attr('role', 'tree').find('ul').attr('role', 'group');
             $('.tree').find('li:has(ul)').addClass('parent_li').attr('role', 'treeitem').find(' > span').attr('title', 'Collapse this branch').on('click', function (e) {

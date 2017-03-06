@@ -16,18 +16,15 @@ namespace ChartsMix.Controllers
         public ActionResult Index()
         {
             db = new Models.ChartsDatabaseManager();
-            List<string> dates;
-            var v = db.GetLineChartMeters(new int[] { 246, 99 }, DateTime.MinValue, DateTime.MaxValue, BarPeriod.Year,out dates);
             var model = new DashbordModel();
-            PrepareDashboardModel(model);
+            PrepareChartsModel(model);
             return View(model);
         }
 
-
         [HttpPost]
-        public ActionResult Index(DashbordModel model, int[] pieIds, int[] barIds)
+        public ActionResult Index(DashbordModel model, int[] pieIds)
         {
-            PrepareDashboardModel(model);
+            PrepareChartsModel(model);
 
             if (pieIds != null && pieIds.Length > 0)
             {
@@ -51,7 +48,7 @@ namespace ChartsMix.Controllers
             return View(model);
         }
 
-        private void PrepareDashboardModel(DashbordModel model)
+        private void PrepareChartsModel(DashbordModel model)
         {
             db = new ChartsDatabaseManager();
             Meter meter = new Meter();
