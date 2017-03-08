@@ -1075,6 +1075,8 @@
     <Content Include="Views\Home\ColumnBasic.cshtml" />
     <Content Include="Views\Home\LineLabels.cshtml" />
     <Content Include="Views\Shared\_Pie3d.cshtml" />
+    <Content Include="Views\Shared\_BarChart.cshtml" />
+    <Content Include="Views\Shared\_LineChart.cshtml" />
     <None Include="Web.Debug.config">
       <DependentUpon>Web.config</DependentUpon>
     </None>
@@ -1125,6 +1127,8 @@
     <Compile Include="Models\LineChartItem.cs" />
     <Compile Include="Models\LineChartModel.cs" />
     <Compile Include="Models\Meter.cs" />
+    <Compile Include="Models\LineChartDataModel.cs" />
+    <Compile Include="Models\CustomLineSeries.cs" />
     <Compile Include="Models\Pie3DModel.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>

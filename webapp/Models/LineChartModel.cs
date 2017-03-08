@@ -13,10 +13,9 @@ namespace ChartsMix.Models
             TreeRoot = new Meter();
         }
         public Meter TreeRoot { get; set; }
-        public List<Series> Data { get; set; }
-        public List<string> Dates { get; set; }
         public BarPeriod period { get; set; }
         public DateTime From { get; set; }
         public DateTime To { get; set; }
+        public int[] Ids { get; set; }
     }
 }

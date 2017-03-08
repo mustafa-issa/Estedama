@@ -119,7 +119,6 @@ C:\Users\Selwade\Documents\ChartMix\webapp\bin\System.Web.WebPages.Razor.xml
 C:\Users\Selwade\Documents\ChartMix\webapp\obj\Debug\ChartsMix.csprojResolveAssemblyReference.cache
 C:\Users\Selwade\Documents\ChartMix\webapp\obj\Debug\ChartsMix.dll
 C:\Users\Selwade\Documents\ChartMix\webapp\obj\Debug\ChartsMix.pdb
-C:\Users\loay\Source\Repos\ChartMix\webapp\obj\Debug\ChartsMix.csprojResolveAssemblyReference.cache
 C:\Users\loay\Source\Repos\ChartMix\webapp\bin\ChartsMix.dll.config
 C:\Users\loay\Source\Repos\ChartMix\webapp\bin\ChartsMix.dll
 C:\Users\loay\Source\Repos\ChartMix\webapp\bin\ChartsMix.pdb
@@ -162,3 +161,4 @@ C:\Users\loay\Source\Repos\ChartMix\webapp\bin\System.Web.WebPages.Razor.xml
 C:\Users\loay\Source\Repos\ChartMix\webapp\obj\Debug\ChartsMix.dll
 C:\Users\loay\Source\Repos\ChartMix\webapp\obj\Debug\ChartsMix.pdb
 C:\Users\loay\Source\Repos\ChartMix\webapp\bin\Newtonsoft.Json.xml
+C:\Users\loay\Source\Repos\ChartMix\webapp\obj\Debug\ChartsMix.csprojResolveAssemblyReference.cache

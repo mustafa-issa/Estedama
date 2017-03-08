@@ -162,7 +162,7 @@ namespace ChartsMix.Models
 
 
         // New
-        public List<Series> GetBarChartMeters(int[] ids, DateTime fromDate, DateTime toDate, BarPeriod period, List<string> dates)
+        public List<Series> GetBarChartMeters(int[] ids, DateTime fromDate, DateTime toDate, BarPeriod period,out List<string> dates)
         {
             var result = new List<Series>();
 
@@ -220,12 +220,12 @@ namespace ChartsMix.Models
             return result;
         }
 
-        private List<LineSeries> HandleLineChartByYear(out List<string> dates, params int[] ids)
+        private List<CustomLineSeries> HandleLineChartByYear(out List<string> dates, params int[] ids)
         {
             try
             {
                 var queryResult = new List<LineChartItem>();
-                var result = new List<LineSeries>();
+                var result = new List<CustomLineSeries>();
                 using (SqlConnection connection = new SqlConnection(_connectionString))
                 {
                     var command = new SqlCommand();
@@ -276,10 +276,10 @@ namespace ChartsMix.Models
                             });
                         }
                     }
-                    result.Add(new LineSeries
+                    result.Add(new CustomLineSeries
                     {
                         Name = meter.Name,
-                        Data = dataResult
+                        things = dataResult
                     });
                 }
                 dates = new List<string> {
@@ -306,7 +306,7 @@ namespace ChartsMix.Models
 
 
         // In Progress
-        public List<LineSeries> GetLineChartMeters(int[] ids, DateTime fromDate, DateTime toDate, BarPeriod period, out List<string> dates)
+        public List<CustomLineSeries> GetLineChartMeters(out List<string> dates, DateTime fromDate, DateTime toDate, BarPeriod period, int[] ids)
         {
             switch (period)
             {

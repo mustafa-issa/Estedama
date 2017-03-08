@@ -5,6 +5,11 @@ using Highsoft.Web.Mvc;
 using Highsoft.Web.Mvc.Charts;
 using System;
 using System.Collections.Generic;
+using System.Runtime.Serialization.Json;
+using System.Text;
+using System.IO;
+using Newtonsoft.Json;
+using System.Web.Script.Serialization;
 
 namespace ChartsMix.Controllers
 {
@@ -15,10 +20,20 @@ namespace ChartsMix.Controllers
         // GET: home/index
         public ActionResult Index()
         {
-            db = new Models.ChartsDatabaseManager();
             var model = new DashbordModel();
             PrepareChartsModel(model);
             return View(model);
+        }
+
+        
+        public ActionResult GetLineChart(LineChartModel model)
+        {
+            var db = new ChartsDatabaseManager();
+            var response = new LineChartDataModel();
+            var dates = new List<string>();
+            response.Result = db.GetLineChartMeters(out dates, model.From, model.To, model.period, model.Ids);
+            response.Dates = dates;
+            return Json(response, JsonRequestBehavior.AllowGet);
         }
 
         [HttpPost]
@@ -30,21 +45,6 @@ namespace ChartsMix.Controllers
             {
                 model.PieModel.Data = new ChartsDatabaseManager().GetPieChartMeters(pieIds, model.PieModel.From, model.PieModel.To, model.PieModel.period);
             }
-
-            //if (lineIds != null && lineIds.Length > 0)
-            //{
-            //    model.PieModel.Data = new ChartsDatabaseManager().GetPieChartMeters(lineIds);
-            //}
-
-            //if (columnIds != null && columnIds.Length > 0)
-            //{
-            //    model.PieModel.Data = new ChartsDatabaseManager().GetPieChartMeters(columnIds);
-            //}
-
-            //if (compIds != null && compIds.Length > 0)
-            //{
-            //    model.PieModel.Data = new ChartsDatabaseManager().GetPieChartMeters(compIds);
-            //}
             return View(model);
         }
 

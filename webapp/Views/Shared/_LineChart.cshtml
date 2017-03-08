@@ -1,7 +1,6 @@
 ﻿@using ChartsMix.Models
 @using Highsoft.Web.Mvc.Charts
 @model LineChartModel
-
 <div>
     @using (Html.BeginForm("Index", "Home"))
     {
@@ -26,56 +25,82 @@
                     </ul>
                 </div>
             </div>
-            <input type="submit" value="Show Line Chart" />
+            <input type="button" class="btn btn-default" value="Show Line Chart" id="getChartLine" onclick="GetLineChart()" />
         </div>
     }
-
     <div class="widget-body">
-        @if (Model.Data != null)
-        {
-            @(Html.Highsoft().Highcharts(
-                                new Highcharts
-                                {
-                                    Title = new Title
-                                    {
-                                        Text = "Monthly Average Temperature"
-                                    },
-                                    XAxis = new List<XAxis>
-                                    {
-                                        new XAxis
-                                        {
-                                            Categories = Model.Dates
-                                        }
-                                    },
-                                    YAxis = new List<YAxis>
-                                    {
-                                        new YAxis
-                                        {
-                                            Title = new YAxisTitle
-                                            {
-                                                Text = "Temperature (°C)"
-                                            }
-                                        }
-                                    },
-                                    PlotOptions = new PlotOptions
-                                    {
-                                        Line = new PlotOptionsLine
-                                        {
-                                            DataLabels = new PlotOptionsLineDataLabels
-                                            {
-                                                Enabled = true
-                                            },
-                                            EnableMouseTracking = false
-                                        }
-                                    },
-                                    Series = Model.Data
-                                }
-                                , "lineChart")
-            )
-        }
-
+        <div id="lineChart"></div>
     </div>
     <!-- end widget content -->
-
 </div>
+<script>
 
+    function GetLineChart() {
+        var model = {};
+        model.Period = $('#ddlLine').val();
+        model.From = $('#From').val();
+        model.To = $('#To').val();
+        model.Ids = [];
+        $('input[name=lineIds]:checked').each(function () {
+            model.Ids.push($(this).attr('value'));
+        });
+        $.ajax({
+            type: "GET",
+            contentType: "application/json; charset=utf-8",
+            url: '@Url.Action("GetLineChart", "Home")',
+            data: model,
+            dataType: "json",
+            traditional: true,
+            success: function (data) {
+                var arr = [];
+                var v = [];
+                var len = data.Result.length;
+                for (var i = 0; i < len; i++) {
+                    v = [];
+                    for (var j = 0; j < data.Result[i].things.length; j++)
+                        v[j] = data.Result[i].things[j].Y;
+                    arr.push({
+                        data: v,
+                        name: data.Result[i].Name
+                    });
+                }
+                DreawChart(arr,data.Dates);
+            },
+            error: function (data,dates) {
+                alert("sam");
+            }
+        });
+    }
+    function DreawChart(data,dates) {
+        
+        Highcharts.chart('lineChart', {
+            chart: {
+                type: 'line'
+            },
+            title: {
+                text: 'Monthly Consumption'
+            },
+            subtitle: {
+                text: 'Source: WorldClimate.com'
+            },
+            xAxis: {
+                categories: dates
+            },
+            yAxis: {
+                title: {
+                    text: 'Consumption'
+                }
+            },
+            plotOptions: {
+                line: {
+                    dataLabels: {
+                        enabled: true
+                    },
+                    enableMouseTracking: true
+                }
+            },
+            series: data
+        });
+    }
+
+</script>
