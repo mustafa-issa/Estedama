@@ -142,6 +142,7 @@ namespace ChartsMix.Models
         {
             var server = new Meter();
             server.Name = "Server";
+            server.Type = "system.base.Folder";
             foreach (var meter in meters)
             {
                 var node = meters.FirstOrDefault(m => m.Id == meter.ParentId);
@@ -162,7 +163,7 @@ namespace ChartsMix.Models
 
 
         // New
-        public List<Series> GetBarChartMeters(int[] ids, DateTime fromDate, DateTime toDate, BarPeriod period,out List<string> dates)
+        public List<Series> GetBarChartMeters(int[] ids, DateTime fromDate, DateTime toDate, BarPeriod period, out List<string> dates)
         {
             var result = new List<Series>();
 
@@ -220,82 +221,80 @@ namespace ChartsMix.Models
             return result;
         }
 
-        private List<CustomLineSeries> HandleLineChartByYear(out List<string> dates, params int[] ids)
+        private List<CustomLineSeries> HandleLineChart(int numberOfReturnedValues, DateTime From, DateTime To, BarPeriod period, params int[] ids)
         {
             try
             {
-                var queryResult = new List<LineChartItem>();
+
                 var result = new List<CustomLineSeries>();
-                using (SqlConnection connection = new SqlConnection(_connectionString))
+                foreach (var meterId in ids)
                 {
-                    var command = new SqlCommand();
-                    command.Connection = connection;
-                    command.Parameters.Add(new SqlParameter("@Ids", string.Join(",", ids)));
-                    command.CommandType = System.Data.CommandType.StoredProcedure;
-                    command.CommandText = "Bar_Chart_Meter";
-                    var from = DateTime.Now;
-                    from = from.AddYears(-1).AddMonths(-1).AddMinutes(-from.Minute).AddSeconds(-from.Second);
-                    command.Parameters.Add(new SqlParameter("@From", from));
-                    command.Parameters.Add(new SqlParameter("@To", DateTime.Now.AddMonths(-1)));
-                    connection.Open();
-                    using (SqlDataReader reader = command.ExecuteReader())
+                    var queryResult = new List<LineChartItem>();
+                    using (SqlConnection connection = new SqlConnection(_connectionString))
                     {
-                        while (reader.Read())
+                        var command = new SqlCommand();
+                        command.Connection = connection;
+                        command.CommandType = System.Data.CommandType.StoredProcedure;
+                        command.CommandText = "Bar_Chart_Meter";
+
+                        command.Parameters.Add(new SqlParameter("@Id", meterId));
+                        command.Parameters.Add(new SqlParameter("@From", From));
+                        command.Parameters.Add(new SqlParameter("@Period", (int)period));
+                        command.Parameters.Add(new SqlParameter("@To", To));
+
+                        connection.Open();
+                        using (SqlDataReader reader = command.ExecuteReader())
+                        {
+                            while (reader.Read())
+                            {
+                                queryResult.Add(new LineChartItem
+                                {
+                                    Name = GetValue<string>(reader["Name"], string.Empty),
+                                    entityId = GetValue<int>(reader["entityID"], 0),
+                                    value = GetValue<double>(reader["FloatVALUE"], 0.0),
+                                    date = GetValue<DateTime>(reader["DateTimeStamp"], DateTime.MinValue)
+                                });
+
+                            }
+                        }
+
+                    }
+                    var meter = queryResult.FirstOrDefault(m => m.entityId == meterId);
+                    if(meter != null)
+                    {
+                        var dataResult = new List<LineSeriesData>();
+                        while (queryResult.Count <= numberOfReturnedValues)
                         {
                             queryResult.Add(new LineChartItem
                             {
-                                Name = GetValue<string>(reader["Name"], string.Empty),
-                                entityId = GetValue<int>(reader["entityID"], 0),
-                                value = GetValue<double>(reader["FloatVALUE"], 0.0),
-                                date = GetValue<DateTime>(reader["DateTimeStamp"], DateTime.MinValue)
+                                Name = meter.Name,
+                                entityId = meter.entityId,
+                                value = 0,
+                                date = (meter.date < CleanDateTimeWeek(To)) ? DateTime.MaxValue : DateTime.MinValue
                             });
-
                         }
-                    }
 
-                }
-                foreach (var meterId in ids)
-                {
-                    var meterResults = queryResult.Where(m => m.entityId == meterId).OrderByDescending(m => m.date).ToList();
-                    var meter = queryResult.FirstOrDefault(m => m.entityId == meterId);
-                    var dataResult = new List<LineSeriesData>();
-                    for (int i = 0; i < 12; i++)
-                    {
-                        if(i < meterResults.Count)
+                        queryResult = queryResult.OrderByDescending(m => m.date).ToList();
+                        for (int i = 0; i < queryResult.Count - 1; i++)
                         {
                             dataResult.Add(new LineSeriesData
                             {
-                                Y = meterResults[i].value
+                                Y = queryResult[i].value - queryResult[i + 1].value
                             });
                         }
-                        else
+                        dataResult.Reverse();
+
+                        result.Add(new CustomLineSeries
                         {
-                            dataResult.Add(new LineSeriesData
-                            {
-                                Y = 0.0
-                            });
-                        }
+                            Name = meter.Name,
+                            things = dataResult
+                        });
                     }
-                    result.Add(new CustomLineSeries
+                    else
                     {
-                        Name = meter.Name,
-                        things = dataResult
-                    });
+                        //
+                    }
                 }
-                dates = new List<string> {
-                        "Jan",
-                        "Feb",
-                        "Mar",
-                        "Apr",
-                        "May",
-                        "Jun",
-                        "Jul",
-                        "Aug",
-                        "Sep",
-                        "Oct",
-                        "Nov",
-                        "Dec"
-                    };
                 return result;
             }
             catch (Exception ex)
@@ -304,69 +303,99 @@ namespace ChartsMix.Models
             }
         }
 
-
         // In Progress
-        public List<CustomLineSeries> GetLineChartMeters(out List<string> dates, DateTime fromDate, DateTime toDate, BarPeriod period, int[] ids)
+        public List<CustomLineSeries> GetLineChartMeters(out ChartDetails details, DateTime fromDate, DateTime toDate, BarPeriod period, int[] ids)
         {
+            details = new ChartDetails();
+            List<CustomLineSeries> result = new List<CustomLineSeries>();
             switch (period)
             {
                 case BarPeriod.Day:
+                    fromDate = DateTime.Now.AddHours(-25);
+                    fromDate = CleanDateTime(fromDate);
+                    toDate = CleanDateTime(DateTime.Now).AddSeconds(-1);
+                    details.Title = "By Day Report";
+                    details.SubTitle = "Last 24 Hours Report";
+                    details.Dates = GenerateHours();
+                    result = HandleLineChart(24, fromDate, toDate, period, ids);
                     break;
                 case BarPeriod.Week:
+                    fromDate = DateTime.Now.AddDays(-8);
+                    fromDate = CleanDateTimeWeek(fromDate);
+                    toDate = CleanDateTimeWeek(DateTime.Now).AddSeconds(-1);
+                    details.Title = "Week Report";
+                    details.SubTitle = "Last 7 Days Report";
+                    (details.Dates = GenerateDays()).Reverse();
+                    result = HandleLineChart(7, fromDate, toDate, period, ids);
                     break;
                 case BarPeriod.Year:
-                    return HandleLineChartByYear(out dates, ids);
+                    fromDate = DateTime.Now.AddMonths(-13);
+                    fromDate = CleanDateTimeYear(fromDate);
+                    toDate = CleanDateTimeYear(DateTime.Now).AddSeconds(-1);
+                    details.Title = "Year Report";
+                    details.SubTitle = "Last 12 Months Report";
+                    (details.Dates = GenerateMonths()).Reverse();
+                    result = HandleLineChart(12, fromDate, toDate, period, ids);
+                    break;
                 case BarPeriod.Custom:
+                    details.Dates = null;
                     break;
                 default:
+                    details.Dates = null;
                     break;
             }
-            return HandleLineChartByYear(out dates, 0);
-            //var result = new List<Series>();
-            //List<double> tokyoValues = new List<double> { 49.9, 71.5, 106.4, 129.2, 144.0, 176.0, 135.6, 148.5, 216.4, 194.1, 95.6, 54.4 };
-            //List<double> nyValues = new List<double> { 83.6, 78.8, 98.5, 93.4, 106.0, 84.5, 105.0, 104.3, 91.2, 83.5, 106.6, 92.3 };
-            //List<double> berlinValues = new List<double> { 42.4, 33.2, 34.5, 39.7, 52.6, 75.5, 57.4, 60.4, 47.6, 39.1, 46.8, 51.1 };
-            //List<double> londonValues = new List<double> { 48.9, 38.8, 39.3, 41.4, 47.0, 48.3, 59.0, 59.6, 52.4, 65.2, 59.3, 51.2 };
-            //List<LineSeriesData> tokyoData = new List<LineSeriesData>();
-            //List<LineSeriesData> nyData = new List<LineSeriesData>();
-            //List<LineSeriesData> berlinData = new List<LineSeriesData>();
-            //List<LineSeriesData> londonData = new List<LineSeriesData>();
-
-            //tokyoValues.ForEach(p => tokyoData.Add(new LineSeriesData { Y = p }));
-            //nyValues.ForEach(p => nyData.Add(new LineSeriesData { Y = p }));
-            //berlinValues.ForEach(p => berlinData.Add(new LineSeriesData { Y = p }));
-            //londonValues.ForEach(p => londonData.Add(new LineSeriesData { Y = p }));
-            //result = new List<Series>
-            //{
-            //    new LineSeries
-            //{
-            //    Name = "Tokyo",
-            //    Data = tokyoData
-            //},
-            //new LineSeries
-            //{
-            //    Name = "London",
-            //    Data = londonData
-            //}
-
-
-            //};
-
-            //dates = new List<string> {
-            //            "1",
-            //            "2",
-            //            "Mar",
-            //            "Apr",
-            //            "May",
-            //            "Jun",
-            //            "Jul",
-            //            "Aug",
-            //            "Sep",
-            //            "Oct",
-            //            "Nov",
-            //            "Dec"
-            //        };
-            //return result;
+            return result;
         }
+
+        #region private Helpers
+
+        private DateTime CleanDateTime(DateTime dateTime)
+        {
+            dateTime = dateTime.AddMinutes(-dateTime.Minute);
+            dateTime = dateTime.AddSeconds(-dateTime.Second);
+            dateTime = dateTime.AddMilliseconds(-dateTime.Millisecond);
+            return dateTime;
+        }
+
+        private DateTime CleanDateTimeWeek(DateTime dateTime)
+        {
+            dateTime = dateTime.AddHours(-dateTime.Hour);
+            return CleanDateTime(dateTime);
+        }
+
+        private DateTime CleanDateTimeYear(DateTime dateTime)
+        {
+            dateTime = dateTime.AddDays(-dateTime.Day);
+            return CleanDateTimeWeek(dateTime);
+        }
+
+        private List<string> GenerateMonths()
+        {
+            var date = DateTime.Now;
+            List<string> dates = new List<string>();
+            for (int i = 1; i <= 12; i++)
+                dates.Add(date.AddMonths(-i).ToString("MMYY"));
+            return dates;
+        }
+
+        private List<string> GenerateDays()
+        {
+            var date = DateTime.Now;
+            List<string> dates = new List<string>();
+            for (int i = 1; i <= 7; i++)
+                dates.Add(date.AddDays(-i).ToString("dd"));
+            return dates;
+        }
+
+        private List<string> GenerateHours()
+        {
+            var date = DateTime.Now;
+            List<string> dates = new List<string>();
+            for (int i = 1; i <= 24; i++)
+                dates.Add(date.AddHours(-i).ToString("hh"));
+            return dates;
+        }
+        #endregion
+
     }
 }

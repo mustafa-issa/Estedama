@@ -30,9 +30,9 @@ namespace ChartsMix.Controllers
         {
             var db = new ChartsDatabaseManager();
             var response = new LineChartDataModel();
-            var dates = new List<string>();
-            response.Result = db.GetLineChartMeters(out dates, model.From, model.To, model.period, model.Ids);
-            response.Dates = dates;
+            var details = new ChartDetails();
+            response.Result = db.GetLineChartMeters(out details, model.From, model.To, model.period, model.Ids);
+            response.Details = details;
             return Json(response, JsonRequestBehavior.AllowGet);
         }
 

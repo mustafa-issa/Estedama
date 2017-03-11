@@ -64,27 +64,27 @@
                         name: data.Result[i].Name
                     });
                 }
-                DreawChart(arr,data.Dates);
+                DreawChart(arr,data.Details);
             },
             error: function (data,dates) {
                 alert("sam");
             }
         });
     }
-    function DreawChart(data,dates) {
+    function DreawChart(data,info) {
         
         Highcharts.chart('lineChart', {
             chart: {
                 type: 'line'
             },
             title: {
-                text: 'Monthly Consumption'
+                text: info.Title
             },
             subtitle: {
-                text: 'Source: WorldClimate.com'
+                text: info.SubTitle
             },
             xAxis: {
-                categories: dates
+                categories: info.Dates
             },
             yAxis: {
                 title: {

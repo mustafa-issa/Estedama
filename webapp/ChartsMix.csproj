@@ -1119,6 +1119,7 @@
     </Compile>
     <Compile Include="Models\AccountViewModels.cs" />
     <Compile Include="Models\BarChartModel.cs" />
+    <Compile Include="Models\ChartDetails.cs" />
     <Compile Include="Models\ChartsDatabaseManager.cs" />
     <Compile Include="Models\DashbordModel.cs" />
     <Compile Include="Models\Enums.cs" />

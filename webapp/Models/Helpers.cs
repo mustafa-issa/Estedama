@@ -7,7 +7,7 @@ namespace ChartsMix.Models
         public static string FormTreeView(Meter node, string name)
         {
             var result = "";
-            if (node.Children.Count > 0)
+            if (node.Type == "system.base.Folder")
             {
                 if (node.Name.Contains("Server"))
                     result += "<li>";
