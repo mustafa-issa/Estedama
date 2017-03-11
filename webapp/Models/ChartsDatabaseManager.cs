@@ -21,6 +21,18 @@ namespace ChartsMix.Models
                 _connectionString = value;
             }
         }
+        public string _groupConnectionString = ConfigurationManager.ConnectionStrings["groups"].ConnectionString;
+        public string groupConnectionString
+        {
+            get
+            {
+                return _groupConnectionString;
+            }
+            set
+            {
+                _groupConnectionString = value;
+            }
+        }
 
         private static T GetValue<T>(object readerValue, T defaultValue = default(T))
         {
@@ -397,5 +409,89 @@ namespace ChartsMix.Models
         }
         #endregion
 
+        public List<Group> GetAllGroups()
+        {
+            var result = new List<Group>();
+            try
+            {
+                using (SqlConnection connection = new SqlConnection(_groupConnectionString))
+                {
+                    var command = new SqlCommand();
+                    command.Connection = connection;
+                    command.CommandType = System.Data.CommandType.Text;
+                    command.CommandText = "Select * from Groups";
+                    connection.Open();
+                    using (SqlDataReader reader = command.ExecuteReader())
+                    {
+                        while (reader.Read())
+                        {
+                            result.Add(new Group
+                            {
+                                Id = GetValue<int>(reader["Id"], 0),
+                                Name = GetValue<string>(reader["Name"], string.Empty),
+                            });
+                        }
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
+            return result;
+        }
+
+        public int AddGroup(Group group)
+        {
+            var result = new List<Group>();
+            try
+            {
+                using (SqlConnection connection = new SqlConnection(_groupConnectionString))
+                {
+                    var command = new SqlCommand();
+                    command.Connection = connection;
+                    command.CommandType = System.Data.CommandType.Text;
+                    command.CommandText = "insert into Groups OUTPUT Inserted.Id values (@Name)";
+                    command.Parameters.AddWithValue("@Name", group.Name);
+                    connection.Open();
+                    int groupId = (int)command.ExecuteScalar();
+                    if (group.Ids != null)
+                    {
+                        foreach (int id in group.Ids)
+                        {
+                            AssignMeterToGroup(id, groupId);
+                        }
+                    }
+
+                    return groupId;
+                }
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
+        }
+
+        public void AssignMeterToGroup(int EntityId, int GroupId)
+        {
+            try
+            {
+                using (SqlConnection connection = new SqlConnection(_groupConnectionString))
+                {
+                    var command = new SqlCommand();
+                    command.Connection = connection;
+                    command.CommandType = System.Data.CommandType.Text;
+                    command.CommandText = "insert into Meters values (@EntityId, @GroupId)";
+                    command.Parameters.AddWithValue("@EntityId", EntityId);
+                    command.Parameters.AddWithValue("@GroupId", GroupId);
+                    connection.Open();
+                    command.ExecuteScalar();
+                }
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
+        }
     }
 }

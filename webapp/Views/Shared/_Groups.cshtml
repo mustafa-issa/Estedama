@@ -1,0 +1,70 @@
+﻿@using ChartsMix.Models
+@model Group
+<div id="myTabContent1" class="tab-content padding-10">
+    <div class="tab-pane fade in active" id="s1">
+        <div>
+            <select multiple style="width:100%" id="ddlGroups" class="select2">
+                @Html.Raw(Helpers.FormGroups())
+            </select>
+        </div>
+        <br />
+        <div class="row" id="informationMessage">
+
+        </div>
+    </div>
+    
+    <div class="tab-pane fade" id="s2">
+        <div class="form-group">
+            <div class="row">
+                <div class="col-md-6">
+                    <input id="GroupName" type="text" class="form-control" name="GroupName" placeholder="Group Name" />
+                </div>
+                <div class="col-md-6">
+                    <input class="btn btn-primary btn-sm" type="button" value="Add" onclick="AddGroup()"/>
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="tree col-md-12 smart-form">
+                <ul>
+                    @Html.Raw(Helpers.FormTreeView(Model.TreeRoot, "groupPie"))
+                </ul>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<script>
+
+    function AddGroup() {
+        var model = {};
+        model.Name = $('#GroupName').val();
+        model.Ids = [];
+        $('input[name=groupPieIds]:checked').each(function () {
+            model.Ids.push($(this).attr('value'));
+        });
+        $.ajax({
+            type: "GET",
+            contentType: "application/json; charset=utf-8",
+            url: '@Url.Action("AddGroup", "Home")',
+            data: model,
+            dataType: "json",
+            traditional: true,
+            success: function (data) {
+                $('#ddlGroups').append($("<option></option>").attr("value", data).text($('#GroupName').val()));
+                $('#informationMessage').append("<div class='alert alert-success col-md-8 col-md-offset-2 fade in'><button class='close' data-dismiss='alert'>×</button><i class='fa-fw fa fa-check'></i><strong>Success</strong> Group " + $('#GroupName').val() + " has been added.</div>")
+                $('#s1toggle').click();
+            },
+            error: function (data, dates) {
+                $('#informationMessage').append("<div class='alert alert-danger col-md-8 col-md-offset-2 fade in'><button class='close' data-dismiss='alert'>×</button><i class='fa-fw fa fa-check'></i><strong>Success</strong> Group " + $('#GroupName').val() + " hasn't been added.</div>")
+                $('#s1toggle').click();
+            }
+        });
+    }
+    
+</script>
+
+
+
+

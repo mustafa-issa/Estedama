@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 
 namespace ChartsMix.Models
 {
@@ -29,6 +30,18 @@ namespace ChartsMix.Models
                 result += node.Name;
                 result += "</label></span>";
                 result += "</li>";
+            }
+            return String.Format(result);
+        }
+
+        public static string FormGroups()
+        {
+            var result = "";
+            ChartsDatabaseManager db = new ChartsDatabaseManager();
+            List<Group> listGroup = db.GetAllGroups();
+            foreach (Group group in listGroup)
+            {
+                result += "<option value = " + group.Id + ">"  + group.Name + "</option >";
             }
             return String.Format(result);
         }
