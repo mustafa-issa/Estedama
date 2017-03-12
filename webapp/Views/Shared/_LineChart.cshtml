@@ -12,10 +12,10 @@
                     </div>
                 </div>
                 <div class="row" id="divDateLine" style="display : none">
-                    <div class="col-md-6 form-group">
+                    <div class="col-md-3 form-group">
                         @Html.EditorFor(m => m.From)
                     </div>
-                    <div class="col-md-6 form-group">
+                    <div class="col-md-3 form-group">
                         @Html.EditorFor(m => m.To)
                     </div>
                 </div>
@@ -38,8 +38,8 @@
     function GetLineChart() {
         var model = {};
         model.Period = $('#ddlLine').val();
-        model.From = $('#From').val();
-        model.To = $('#To').val();
+        model.From = dateFormat($('#lineChartModel_From').val());
+        model.To = dateFormat($('#lineChartModel_To').val());
         model.Ids = [];
         $('input[name=lineIds]:checked').each(function () {
             model.Ids.push($(this).attr('value'));
@@ -71,6 +71,13 @@
             }
         });
     }
+
+    function dateFormat(dateValue)
+    {
+        var temp = dateValue.replace(" - ", " ").split("/");
+        return temp[1] + "-" + temp[0] + "-" + temp[2] + ":00.000";
+    }
+
     function DreawChart(data,info) {
         
         Highcharts.chart('lineChart', {
