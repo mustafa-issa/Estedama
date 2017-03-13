@@ -25,12 +25,12 @@
                     </ul>
                 </div>
             </div>
-            <input type="submit" value="Show Pie" />
+            <input type="button" class="btn btn-default" value="Show Pie Chart" id="getChartPie" onclick="GetPieChart()" />
         </div>
     }
     <div class="widget-body">
-        <div>
-            @if (Model.Data != null)
+            <div id="pieChart"></div>
+            @*@if (Model.Data != null)
             {
                 @(Html.Highsoft().Highcharts(
                                 new Highcharts
@@ -78,7 +78,108 @@
                                 }
                                 , "pieChart")
                 )
-            }
-        </div>
+            }*@
     </div>
 </div>
+
+<script>
+
+    function GetPieChart() {
+        var model = {};
+        model.Period = $('#ddlPie').val();
+        model.From = $('#From').val();
+        model.To = $('#To').val();
+        model.Ids = [];
+        $('input[name=pieIds]:checked').each(function () {
+            model.Ids.push($(this).attr('value'));
+        });
+        $.ajax({
+            type: "GET",
+            contentType: "application/json; charset=utf-8",
+            url: '@Url.Action("GetPieChart", "Home")',
+            data: model,
+            dataType: "json",
+            traditional: true,
+            success: function (data) {
+                var arr = [];
+                var len = data.length;
+                for (var i = 0; i < len; i++) {
+                    arr.push({
+                        y: data[i].Y,
+                        name: data[i].Name
+                    });
+                }
+                DreawPieChart(arr);
+            },
+            error: function (err) {
+                alert(err);
+            }
+        });
+    }
+    function DreawPieChart(arr) {
+
+
+
+        Highcharts.chart('pieChart', {
+            chart: {
+                plotBackgroundColor: null,
+                plotBorderWidth: null,
+                plotShadow: false,
+                type: 'pie'
+            },
+            title: {
+                text: 'Browser market shares January, 2015 to May, 2015'
+            },
+            tooltip: {
+                pointFormat: '{series.name}: <b>{point.percentage:.1f}%</b>'
+            },
+            plotOptions: {
+                pie: {
+                    allowPointSelect: true,
+                    cursor: 'pointer',
+                    dataLabels: {
+                        enabled: true,
+                        format: '<b>{point.name}</b>: {point.percentage:.1f} %',
+                        style: {
+                            color: (Highcharts.theme && Highcharts.theme.contrastTextColor) || 'black'
+                        }
+                    },
+                    showInLegend: true
+                }
+            },
+            series: [{
+                name: 'Brands',
+                colorByPoint: true,
+                data: arr
+            }]
+        });
+
+
+        //Highcharts.chart('pieChart', {
+        //    chart: {
+        //        type: 'pie'
+        //    },
+        //    title: {
+        //        text: 'Browser market shares January, 2015 to May, 2015'
+        //    },
+        //    tooltip: {
+        //        pointFormat: '{series.name}: <b>{point.percentage:.1f}%</b>'
+        //    },
+        //    plotOptions: {
+        //        pie: {
+        //            allowPointSelect: true,
+        //            cursor: 'pointer',
+        //            dataLabels: {
+        //                enabled: true,
+        //                format: '<b>{point.name}</b>: {point.percentage:.1f} %',
+        //                style: {
+        //                    color: (Highcharts.theme && Highcharts.theme.contrastTextColor) || 'black'
+        //                }
+        //            }
+        //        }
+        //    },
+        //    series: { data: data, name: 'meters'}
+        //});
+    }
+
+</script>

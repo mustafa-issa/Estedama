@@ -45,65 +45,68 @@ namespace ChartsMix.Models
         public List<PieSeriesData> GetPieChartMeters(int[] ids, DateTime fromDate, DateTime toDate, PiePeriod period)
         {
             var result = new List<PieSeriesData>();
-            try
+            foreach(var meterId in ids)
             {
-                using (SqlConnection connection = new SqlConnection(_connectionString))
+                try
                 {
-                    var command = new SqlCommand();
-                    command.Connection = connection;
-                    command.Parameters.Add(new SqlParameter("@Ids", string.Join(",", ids)));
-                    switch (period)
+                    using (SqlConnection connection = new SqlConnection(_connectionString))
                     {
-                        case PiePeriod.Day:
-                            fromDate = new DateTime(DateTime.Now.Year, DateTime.Now.Month, DateTime.Now.Day, 12, 0, 0);
-                            fromDate = fromDate.AddSeconds(-fromDate.Second);
-                            toDate = DateTime.Now;
-                            break;
-                        case PiePeriod.Week:
-                            fromDate = DateTime.Now;
-                            fromDate = fromDate.AddDays(-7);
-                            fromDate = fromDate.AddSeconds(-fromDate.Second);
-                            toDate = DateTime.Now;
-                            break;
-                        case PiePeriod.Month:
-                            fromDate = DateTime.Now;
-                            fromDate = fromDate.AddMonths(-1);
-                            fromDate = fromDate.AddSeconds(-fromDate.Second);
-                            toDate = DateTime.Now;
-                            break;
-                        case PiePeriod.Year:
-                            fromDate = DateTime.Now;
-                            fromDate = fromDate.AddYears(-1);
-                            fromDate = fromDate.AddSeconds(-fromDate.Second);
-                            toDate = DateTime.Now;
-                            break;
-                        case PiePeriod.Custom:
-                            fromDate = fromDate.AddSeconds(-fromDate.Second);
-                            toDate = toDate.AddSeconds(59 - toDate.Second);
-                            break;
-                    }
-                    command.Parameters.Add(new SqlParameter("@From", fromDate));
-                    command.Parameters.Add(new SqlParameter("@To", toDate));
-
-                    command.CommandType = System.Data.CommandType.StoredProcedure;
-                    command.CommandText = "Get_Pie3D_Chart";
-                    connection.Open();
-                    using (SqlDataReader reader = command.ExecuteReader())
-                    {
-                        while (reader.Read())
+                        var command = new SqlCommand();
+                        command.Connection = connection;
+                        command.Parameters.Add(new SqlParameter("@Id", meterId));
+                        switch (period)
                         {
-                            result.Add(new PieSeriesData
+                            case PiePeriod.Day:
+                                fromDate = new DateTime(DateTime.Now.Year, DateTime.Now.Month, DateTime.Now.Day, 12, 0, 0);
+                                fromDate = fromDate.AddSeconds(-fromDate.Second);
+                                toDate = DateTime.Now;
+                                break;
+                            case PiePeriod.Week:
+                                fromDate = DateTime.Now;
+                                fromDate = fromDate.AddDays(-7);
+                                fromDate = fromDate.AddSeconds(-fromDate.Second);
+                                toDate = DateTime.Now;
+                                break;
+                            case PiePeriod.Month:
+                                fromDate = DateTime.Now;
+                                fromDate = fromDate.AddMonths(-1);
+                                fromDate = fromDate.AddSeconds(-fromDate.Second);
+                                toDate = DateTime.Now;
+                                break;
+                            case PiePeriod.Year:
+                                fromDate = DateTime.Now;
+                                fromDate = fromDate.AddYears(-1);
+                                fromDate = fromDate.AddSeconds(-fromDate.Second);
+                                toDate = DateTime.Now;
+                                break;
+                            case PiePeriod.Custom:
+                                fromDate = fromDate.AddSeconds(-fromDate.Second);
+                                toDate = toDate.AddSeconds(59 - toDate.Second);
+                                break;
+                        }
+                        command.Parameters.Add(new SqlParameter("@From", fromDate));
+                        command.Parameters.Add(new SqlParameter("@To", toDate));
+
+                        command.CommandType = System.Data.CommandType.StoredProcedure;
+                        command.CommandText = "Get_Pie3D_Chart";
+                        connection.Open();
+                        using (SqlDataReader reader = command.ExecuteReader())
+                        {
+                            while (reader.Read())
                             {
-                                Name = GetValue<string>(reader["Name"], string.Empty),
-                                Y = GetValue<double>(reader["FloatVALUE"], 0.0)
-                            });
+                                result.Add(new PieSeriesData
+                                {
+                                    Name = GetValue<string>(reader["Name"], string.Empty),
+                                    Y = GetValue<double>(reader["FloatVALUE"], 0.0)
+                                });
+                            }
                         }
                     }
                 }
-            }
-            catch (Exception ex)
-            {
-                throw ex;
+                catch (Exception ex)
+                {
+                    throw ex;
+                }
             }
             return result;
         }
@@ -386,7 +389,7 @@ namespace ChartsMix.Models
             var date = DateTime.Now;
             List<string> dates = new List<string>();
             for (int i = 1; i <= 12; i++)
-                dates.Add(date.AddMonths(-i).ToString("MMYY"));
+                dates.Add(date.AddMonths(-i).ToString("Y"));
             return dates;
         }
 
@@ -395,7 +398,7 @@ namespace ChartsMix.Models
             var date = DateTime.Now;
             List<string> dates = new List<string>();
             for (int i = 1; i <= 7; i++)
-                dates.Add(date.AddDays(-i).ToString("dd"));
+                dates.Add(date.AddDays(-i).ToString("D"));
             return dates;
         }
 

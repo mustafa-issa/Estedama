@@ -17,15 +17,16 @@ namespace ChartsMix.Controllers
     public class HomeController : Controller
     {
         private ChartsDatabaseManager db;
-        // GET: home/index
-        public ActionResult Index()
+
+        // Pie Chart Ajax 
+        public ActionResult GetPieChart(PieChartModel model)
         {
-            var model = new DashbordModel();
-            PrepareChartsModel(model);
-            return View(model);
+            var result = new ChartsDatabaseManager().GetPieChartMeters(model.Ids, model.From, model.To, model.period);
+            return Json(result, JsonRequestBehavior.AllowGet);
         }
 
 
+        // Line Chart Ajax
         public ActionResult GetLineChart(LineChartModel model)
         {
             var db = new ChartsDatabaseManager();
@@ -36,15 +37,20 @@ namespace ChartsMix.Controllers
             return Json(response, JsonRequestBehavior.AllowGet);
         }
 
+
+        // GET: home/index
+        public ActionResult Index()
+        {
+            var model = new DashbordModel();
+            PrepareChartsModel(model);
+            return View(model);
+        }
+
         [HttpPost]
-        public ActionResult Index(DashbordModel model, int[] pieIds, string GroupName)
+        public ActionResult Index(DashbordModel model, string GroupName)
         {
             PrepareChartsModel(model);
 
-            if (pieIds != null && pieIds.Length > 0)
-            {
-                model.PieModel.Data = new ChartsDatabaseManager().GetPieChartMeters(pieIds, model.PieModel.From, model.PieModel.To, model.PieModel.period);
-            }
             PieGroupModel pieDrilldown = new PieGroupModel();
             pieDrilldown = PieDrilldown();
             model.pieGroupChartModel = pieDrilldown;

@@ -28,12 +28,13 @@
                     </ul>
                 </div>
             </div>
-            <input type="submit" value="Show Bar" />
+            <input type="button" class="btn btn-default" value="Show Bar Chart" id="getChartLine" onclick="GetBarChart()" />
             <!-- This area used as dropdown edit box -->
         </div>
     }
     <div class="widget-body">
-        @if (Model.Data != null)
+        <div id="barChart"></div>
+        @*@if (Model.Data != null)
         {
             @(Html.Highsoft().Highcharts(
                 new Highcharts()
@@ -85,10 +86,83 @@
                 }
                 , "barChart")
             )
-        }
+        }*@
 
     </div>
 
 
 
 </div>
+
+
+<script>
+
+    function GetBarChart() {
+        var model = {};
+        model.Period = $('#ddlBar').val();
+        model.From = $('#From').val();
+        model.To = $('#To').val();
+        model.Ids = [];
+        $('input[name=barIds]:checked').each(function () {
+            model.Ids.push($(this).attr('value'));
+        });
+        $.ajax({
+            type: "GET",
+            contentType: "application/json; charset=utf-8",
+            url: '@Url.Action("GetLineChart", "Home")',
+            data: model,
+            dataType: "json",
+            traditional: true,
+            success: function (data) {
+                var arr = [];
+                var v = [];
+                var len = data.Result.length;
+                for (var i = 0; i < len; i++) {
+                    v = [];
+                    for (var j = 0; j < data.Result[i].things.length; j++)
+                        v[j] = data.Result[i].things[j].Y;
+                    arr.push({
+                        data: v,
+                        name: data.Result[i].Name
+                    });
+                }
+                DreawBarChart(arr,data.Details);
+            },
+            error: function (data,dates) {
+                alert("sam");
+            }
+        });
+    }
+    function DreawBarChart(data,info) {
+
+        Highcharts.chart('barChart', {
+            chart: {
+                type: 'column'
+            },
+            title: {
+                text: info.Title
+            },
+            subtitle: {
+                text: info.SubTitle
+            },
+            xAxis: {
+                categories: info.Dates
+            },
+            yAxis: {
+                title: {
+                    text: 'Consumption'
+                }
+            },
+            plotOptions: {
+                line: {
+                    dataLabels: {
+                        enabled: true
+                    },
+                    enableMouseTracking: true
+                }
+            },
+            series: data
+        });
+    }
+
+</script>
