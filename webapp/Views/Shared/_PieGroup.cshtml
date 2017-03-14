@@ -21,7 +21,7 @@
                 </div>
                 <div class="form-group">
                     <label>Meter groups</label>
-                    
+
                     <ul id="myTab1" class="nav nav-tabs bordered">
                         <li class="active">
                             <a href="#s1" id="s1toggle" data-toggle="tab">Select Groups </a>
@@ -29,163 +29,99 @@
                         <li>
                             <a href="#s2" data-toggle="tab"><i class="fa fa-fw fa-lg fa-gear"></i> Create new group</a>
                         </li>
-                        
+
                     </ul>
                     @Html.Partial("_Groups", Model.Group, new ViewDataDictionary { TemplateInfo = new TemplateInfo { HtmlFieldPrefix = "GroupModel" } })
-                    
+
                 </div>
             </div>
-            <input type="button" onclick="test()" value="Show Pie" />
+            <input type="button" class="btn btn-default" value="Show Groups Chart" id="getGroupChart" onclick="GetGroupChart()" />
         </div>
     }
     <div class="widget-body">
-        <div>
-            @if (Model.GroupData != null)
-            {
-                @(Html.Highsoft().Highcharts(
-        new Highcharts
-        {
-            Title = new Title
-            {
-                Text = "Browser market shares. January, 2015 to May, 2015"
-            },
-            Subtitle = new Subtitle
-            {
-                Text = "Click the columns to view versions. Source: <a href='http://netmarketshare.com'>netmarketshare.com</a>."
-            },
-            XAxis = new List<XAxis>
-            {
-                new XAxis
-                {
-                    Type = XAxisType.Category
-                }
-            },
-            YAxis = new List<YAxis>
-            {
-                new YAxis
-                {
-                    Title = new YAxisTitle
-                    {
-                        Text = "Total percent market share"
-                    }
-                }
-            },
-            Legend = new Legend
-            {
-                Enabled = false
-            },
-            Tooltip = new Tooltip
-            {
-                HeaderFormat = "<span style='font-size:11px'>{series.name}</span><br>",
-                PointFormat = "<span style='color:{point.color}'>{point.name}</span>: <b>{point.y:.2f}%</b> of total<br/>"
-            },
-
-            PlotOptions = new PlotOptions
-            {
-                Series = new PlotOptionsSeries
-                {
-                    DataLabels = new PlotOptionsSeriesDataLabels
-                    {
-                        Enabled = true,
-                        Format = "{point.name}: {point.y:.1f}%"
-                    }
-                }
-            },
-            Series = new List<Series>
-            {
-                new PieSeries
-                {
-                    Name = "Groups",
-                    Data = Model.GroupData
-                }
-            },
-            Drilldown = new Drilldown
-            {
-                Series = Model.Series
-            }
-        }
-        , "pieChartGroup")
-                )
-            }
-        </div>
+        <div id="groupChart"></div>
     </div>
 </div>
-
 <script>
 
-    function GetPieGroupChart() {
+    function GetGroupChart() {
         var model = {};
         model.Period = $('#ddlPieGroup').val();
         model.From = $('#pieGroupChartModel_From').val();
         model.To = $('#pieGroupChartModel_To').val();
         model.Ids = $('#ddlGroups').val();
-        
+
         $.ajax({
             type: "GET",
             contentType: "application/json; charset=utf-8",
-            url: '@Url.Action("GetPieGroupChart", "Home")',
+            url: '@Url.Action("GetGroupChart", "Home")',
             data: model,
             dataType: "json",
             traditional: true,
             success: function (data) {
-                var arr = [];
-                var v = [];
-                var len = data.Result.length;
+                var drillDowns = [];
+                var len = data.length;
                 for (var i = 0; i < len; i++) {
-                    v = [];
-                    for (var j = 0; j < data.Result[i].things.length; j++)
-                        v[j] = data.Result[i].things[j].Y;
-                    arr.push({
-                        data: v,
-                        name: data.Result[i].Name
+                    drillDowns.push({
+                        data: data[i].subGroups,
+                        name: data[i].name,
+                        id: data[i].name
                     });
                 }
-                DreawChart(arr,data.Dates);
+                DreawGroupedChart(data, drillDowns);
             },
-            error: function (data,dates) {
+            error: function (data) {
                 alert("sam");
             }
         });
     }
-    function DreawChart(data,dates) {
-
-        Highcharts.chart('lineChart', {
+    function DreawGroupedChart(data, arr) {
+        Highcharts.chart('groupChart', {
             chart: {
-                type: 'area'
+                type: 'column'
             },
             title: {
-                text: 'Monthly Consumption'
+                text: 'Browser market shares. January, 2015 to May, 2015'
             },
             subtitle: {
-                text: 'Bader shwal'
+                text: 'Click the columns to view versions. Source: <a href="http://netmarketshare.com">netmarketshare.com</a>.'
             },
             xAxis: {
-                categories: dates
+                type: 'category'
             },
             yAxis: {
                 title: {
-                    text: 'Consumption'
+                    text: 'Total percent market share'
                 }
+
+            },
+            legend: {
+                enabled: false
             },
             plotOptions: {
-                line: {
+                series: {
+                    borderWidth: 0,
                     dataLabels: {
-                        enabled: false
-                    },
-                    enableMouseTracking: false
+                        enabled: true,
+                        format: '{point.y:.1f}%'
+                    }
                 }
             },
-            series: data
+
+            tooltip: {
+                headerFormat: '<span style="font-size:11px">{series.name}</span><br>',
+                pointFormat: '<span style="color:{point.color}">{point.name}</span>: <b>{point.y:.2f}%</b> of total<br/>'
+            },
+
+            series: [{
+                name: 'Meters',
+                colorByPoint: true,
+                data: data
+            }],
+            drilldown: {
+                series: arr
+            }
         });
     }
 
-</script>
-
-<script>
-    function test()
-    {
-        var ids = [];
-        ids = $('#ddlGroups').val();
-        alert(ids[0]);
-    }
 </script>

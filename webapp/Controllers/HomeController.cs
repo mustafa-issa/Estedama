@@ -2,6 +2,13 @@
 using System.Web.Mvc;
 using Highsoft.Web.Mvc.Charts;
 using System.Collections.Generic;
+using System.Runtime.Serialization.Json;
+using System.Text;
+using System.IO;
+using Newtonsoft.Json;
+using System.Web.Script.Serialization;
+using System.Threading.Tasks;
+
 
 namespace ChartsMix.Controllers
 {
@@ -9,34 +16,51 @@ namespace ChartsMix.Controllers
     public class HomeController : Controller
     {
         private ChartsDatabaseManager db;
-        // GET: home/index
-        public ActionResult Index()
+
+        // Pie Chart Ajax 
+        public async Task<ActionResult> GetPieChart(PieChartModel model)
         {
-            var model = new DashbordModel();
-            PrepareChartsModel(model);
-            return View(model);
+            var result = await new ChartsDatabaseManager().GetPieChartMeters(model.Ids, model.From, model.To, model.period);
+            return Json(result, JsonRequestBehavior.AllowGet);
         }
 
 
-        public ActionResult GetLineChart(LineChartModel model)
+        // Line Chart Ajax
+        public async Task<ActionResult> GetLineChart(LineChartModel model)
         {
             var db = new ChartsDatabaseManager();
             var response = new LineChartDataModel();
             var details = new ChartDetails();
-            response.Result = db.GetLineChartMeters(out details, model.From, model.To, model.period, model.Ids);
+            response.Result = await db.GetLineChartMeters(details, model.From, model.To, model.period, model.Ids);
             response.Details = details;
             return Json(response, JsonRequestBehavior.AllowGet);
         }
 
-        [HttpPost]
-        public ActionResult Index(DashbordModel model, int[] pieIds, string GroupName)
+        public async Task<ActionResult> GetGroupChart(LineChartModel model)
         {
-            PrepareChartsModel(model);
-
-            if (pieIds != null && pieIds.Length > 0)
+            var model2 = new LineChartModel
             {
-                model.PieModel.Data = new ChartsDatabaseManager().GetPieChartMeters(pieIds, model.PieModel.From, model.PieModel.To, model.PieModel.period);
-            }
+                From = DateTime.Now.AddYears(-1),
+                To = DateTime.Now,
+                Ids = new int[] { 1, 2 }
+            };
+            var list = await new ChartsDatabaseManager().GetGroupChart(model2);
+            return Json(list, JsonRequestBehavior.AllowGet);
+        }
+
+        // GET: home/index
+        public async Task<ActionResult> Index()
+        {
+            var model = new DashbordModel();
+            await PrepareChartsModel(model);
+            return View(model);
+        }
+
+        [HttpPost]
+        public async Task<ActionResult> Index(DashbordModel model, string GroupName)
+        {
+            await PrepareChartsModel(model);
+
             PieGroupModel pieDrilldown = new PieGroupModel();
             pieDrilldown = PieDrilldown();
             model.pieGroupChartModel = pieDrilldown;
@@ -45,21 +69,21 @@ namespace ChartsMix.Controllers
             return View(model);
         }
 
-        private void PrepareChartsModel(DashbordModel model)
+        private async Task PrepareChartsModel(DashbordModel model)
         {
             db = new ChartsDatabaseManager();
             Meter meter = new Meter();
-            meter = db.GetMeterTree();
+            meter = await db.GetMeterTree();
             model.PieModel.TreeRoot = meter;
             model.lineChartModel.TreeRoot = meter;
             model.barChartModel.TreeRoot = meter;
             model.pieGroupChartModel.Group.TreeRoot = meter;
         }
 
-        public ActionResult AddGroup(Group model)
+        public async Task<ActionResult> AddGroup(Group model)
         {
             var db = new ChartsDatabaseManager();
-            int response = db.AddGroup(model);
+            int response = await db.AddGroup(model);
             return Json(response, JsonRequestBehavior.AllowGet);
         }
 
@@ -68,8 +92,6 @@ namespace ChartsMix.Controllers
             var db = new ChartsDatabaseManager();
             var response = new LineChartDataModel();
             var dates = new List<string>();
-            //response.Result = db.GetLineChartMeters(out dates, model.From, model.To, model.period, model.Ids);
-            //response.Dates = dates;
             return Json(response, JsonRequestBehavior.AllowGet);
         }
 

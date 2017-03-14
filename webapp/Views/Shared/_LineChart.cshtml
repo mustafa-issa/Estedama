@@ -14,6 +14,7 @@
                 <div class="row" id="divDateLine" style="display : none">
                     <div class="col-md-3 form-group">
                         @Html.EditorFor(m => m.From)
+                        <input type="text" id="lineFrom" placeholder="Select a date" class="form-control form_datetime" data-dateformat="dd/mm/yy">
                     </div>
                     <div class="col-md-3 form-group">
                         @Html.EditorFor(m => m.To)
