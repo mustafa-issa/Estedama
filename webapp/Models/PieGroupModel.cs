@@ -12,7 +12,7 @@ namespace ChartsMix.Models
         }
         public List<Series> Series { get; set; }
         public List<PieSeriesData> GroupData { get; set; }
-        public PiePeriod period { get; set; }
+        public BarPeriod period { get; set; }
         public DateTime From { get; set; }
         public DateTime To { get; set; }
         public Group Group { get; set; }

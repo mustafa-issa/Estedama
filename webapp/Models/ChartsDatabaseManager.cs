@@ -405,7 +405,7 @@ namespace ChartsMix.Models
                         fromDate = fromDate.AddHours(-1);
                         toDate = toDate.AddHours(1);
                         (details.Dates = GenerateHours((int)hours +1, toDate)).Reverse();
-                        result = HandleLineChart((int)hours + 1, fromDate, toDate, BarPeriod.Day, ids);
+                        result = await HandleLineChart((int)hours + 1, fromDate, toDate, BarPeriod.Day, ids);
                     }
                     else if (hours >= 48 && hours <= 720) //period more than 2 days and less than or equal to 1 month
                     {
@@ -415,7 +415,7 @@ namespace ChartsMix.Models
                         fromDate = fromDate.AddDays(-1);
                         toDate = toDate.AddDays(1);
                         (details.Dates = GenerateDays(days, toDate)).Reverse();
-                        result = HandleLineChart(days, fromDate, toDate, BarPeriod.Week, ids);
+                        result = await HandleLineChart(days, fromDate, toDate, BarPeriod.Week, ids);
                     }
                     else if (hours > 720)
                     {
@@ -425,7 +425,7 @@ namespace ChartsMix.Models
                         fromDate = fromDate.AddMonths(-1);
                         toDate = toDate.AddMonths(1);
                         (details.Dates = GenerateMonths(months, toDate)).Reverse();
-                        result = HandleLineChart(months, fromDate, toDate, BarPeriod.Year, ids);
+                        result = await HandleLineChart(months, fromDate, toDate, BarPeriod.Year, ids);
                     }
                     else
                     {
@@ -492,7 +492,7 @@ namespace ChartsMix.Models
         }
         #endregion
 
-        public async Task<List<Group>> GetAllGroups()
+        public List<Group> GetAllGroups()
         {
             var result = new List<Group>();
             try
@@ -503,10 +503,10 @@ namespace ChartsMix.Models
                     command.Connection = connection;
                     command.CommandType = System.Data.CommandType.Text;
                     command.CommandText = "Select * from Groups";
-                    await connection.OpenAsync();
-                    using (SqlDataReader reader = await command.ExecuteReaderAsync())
+                    connection.Open();
+                    using (SqlDataReader reader = command.ExecuteReader())
                     {
-                        while (await reader.ReadAsync())
+                        while (reader.Read())
                         {
                             result.Add(new Group
                             {

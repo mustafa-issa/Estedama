@@ -6,6 +6,7 @@ using System.Linq;
 using System.Web;
 using System.Web.Mvc;
 using ChartsMix.Models;
+using System.Threading.Tasks;
 
 namespace SmartAdminMvc.Controllers
 {
@@ -35,13 +36,13 @@ namespace SmartAdminMvc.Controllers
         }
 
         [HttpPost]
-        public ActionResult Pie3D(int[] Ids)
+        public async Task<ActionResult> Pie3D(int[] Ids)
         {
             var model = new Pie3DModel();
             var db = new ChartsDatabaseManager();
             if(Ids != null && Ids.Length > 0)
             {
-                model.Data = new ChartsDatabaseManager().GetPieChartMeters(Ids,DateTime.MinValue,DateTime.MaxValue,model.period);
+                model.Data = await new ChartsDatabaseManager().GetPieChartMeters(Ids,DateTime.MinValue,DateTime.MaxValue,model.period);
             }
             return View(model);
         }
