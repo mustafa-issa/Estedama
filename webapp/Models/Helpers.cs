@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Threading.Tasks;
 
 namespace ChartsMix.Models
 {
@@ -34,11 +35,11 @@ namespace ChartsMix.Models
             return String.Format(result);
         }
 
-        public static string FormGroups()
+        public static async Task<string> FormGroups()
         {
             var result = "";
             ChartsDatabaseManager db = new ChartsDatabaseManager();
-            List<Group> listGroup = db.GetAllGroups();
+            List<Group> listGroup = await  db.GetAllGroups();
             foreach (Group group in listGroup)
             {
                 result += "<option value = " + group.Id + ">"  + group.Name + "</option >";

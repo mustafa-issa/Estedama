@@ -122,13 +122,15 @@
 
         Highcharts.chart('pieChart', {
             chart: {
-                plotBackgroundColor: null,
-                plotBorderWidth: null,
-                plotShadow: false,
-                type: 'pie'
+                type: 'pie',
+                options3d: {
+                    enabled: true,
+                    alpha: 45,
+                    beta: 0
+                }
             },
             title: {
-                text: 'Browser market shares January, 2015 to May, 2015'
+                text: 'Browser market shares at a specific website, 2014'
             },
             tooltip: {
                 pointFormat: '{series.name}: <b>{point.percentage:.1f}%</b>'
@@ -137,19 +139,16 @@
                 pie: {
                     allowPointSelect: true,
                     cursor: 'pointer',
+                    depth: 35,
                     dataLabels: {
                         enabled: true,
-                        format: '<b>{point.name}</b>: {point.percentage:.1f} %',
-                        style: {
-                            color: (Highcharts.theme && Highcharts.theme.contrastTextColor) || 'black'
-                        }
-                    },
-                    showInLegend: true
+                        format: '{point.name}'
+                    }
                 }
             },
             series: [{
-                name: 'Brands',
-                colorByPoint: true,
+                name: 'Meters',
+                type: 'pie',
                 data: arr
             }]
         });

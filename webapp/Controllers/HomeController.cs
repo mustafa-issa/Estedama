@@ -10,6 +10,7 @@ using System.Text;
 using System.IO;
 using Newtonsoft.Json;
 using System.Web.Script.Serialization;
+using System.Threading.Tasks;
 
 namespace ChartsMix.Controllers
 {
@@ -19,37 +20,48 @@ namespace ChartsMix.Controllers
         private ChartsDatabaseManager db;
 
         // Pie Chart Ajax 
-        public ActionResult GetPieChart(PieChartModel model)
+        public async Task<ActionResult> GetPieChart(PieChartModel model)
         {
-            var result = new ChartsDatabaseManager().GetPieChartMeters(model.Ids, model.From, model.To, model.period);
+            var result = await new ChartsDatabaseManager().GetPieChartMeters(model.Ids, model.From, model.To, model.period);
             return Json(result, JsonRequestBehavior.AllowGet);
         }
 
 
         // Line Chart Ajax
-        public ActionResult GetLineChart(LineChartModel model)
+        public async Task<ActionResult> GetLineChart(LineChartModel model)
         {
             var db = new ChartsDatabaseManager();
             var response = new LineChartDataModel();
             var details = new ChartDetails();
-            response.Result = db.GetLineChartMeters(out details, model.From, model.To, model.period, model.Ids);
+            response.Result = await db.GetLineChartMeters(details, model.From, model.To, model.period, model.Ids);
             response.Details = details;
             return Json(response, JsonRequestBehavior.AllowGet);
         }
 
+        public async Task<ActionResult> GetGroupChart(LineChartModel model)
+        {
+            var model2 = new LineChartModel
+            {
+                From = DateTime.Now.AddYears(-1),
+                To = DateTime.Now,
+                Ids = new int[] { 1, 2 }
+            };
+            var list = await new ChartsDatabaseManager().GetGroupChart(model2);
+            return Json(list, JsonRequestBehavior.AllowGet);
+        }
 
         // GET: home/index
-        public ActionResult Index()
+        public async Task<ActionResult> Index()
         {
             var model = new DashbordModel();
-            PrepareChartsModel(model);
+            await PrepareChartsModel(model);
             return View(model);
         }
 
         [HttpPost]
-        public ActionResult Index(DashbordModel model, string GroupName)
+        public async Task<ActionResult> Index(DashbordModel model, string GroupName)
         {
-            PrepareChartsModel(model);
+            await PrepareChartsModel(model);
 
             PieGroupModel pieDrilldown = new PieGroupModel();
             pieDrilldown = PieDrilldown();
@@ -59,21 +71,21 @@ namespace ChartsMix.Controllers
             return View(model);
         }
 
-        private void PrepareChartsModel(DashbordModel model)
+        private async Task PrepareChartsModel(DashbordModel model)
         {
             db = new ChartsDatabaseManager();
             Meter meter = new Meter();
-            meter = db.GetMeterTree();
+            meter = await db.GetMeterTree();
             model.PieModel.TreeRoot = meter;
             model.lineChartModel.TreeRoot = meter;
             model.barChartModel.TreeRoot = meter;
             model.pieGroupChartModel.Group.TreeRoot = meter;
         }
 
-        public ActionResult AddGroup(Group model)
+        public async Task<ActionResult> AddGroup(Group model)
         {
             var db = new ChartsDatabaseManager();
-            int response = db.AddGroup(model);
+            int response = await db.AddGroup(model);
             return Json(response, JsonRequestBehavior.AllowGet);
         }
 
@@ -82,8 +94,6 @@ namespace ChartsMix.Controllers
             var db = new ChartsDatabaseManager();
             var response = new LineChartDataModel();
             var dates = new List<string>();
-            //response.Result = db.GetLineChartMeters(out dates, model.From, model.To, model.period, model.Ids);
-            //response.Dates = dates;
             return Json(response, JsonRequestBehavior.AllowGet);
         }
 
