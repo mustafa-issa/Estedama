@@ -100,8 +100,8 @@
     function GetBarChart() {
         var model = {};
         model.Period = $('#ddlBar').val();
-        model.From = $('#From').val();
-        model.To = $('#To').val();
+        model.From = dateFormat($('#barChartModel_From').val());
+        model.To = dateFormat($('#barChartModel_To').val());
         model.Ids = [];
         $('input[name=barIds]:checked').each(function () {
             model.Ids.push($(this).attr('value'));

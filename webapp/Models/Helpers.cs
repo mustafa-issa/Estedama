@@ -35,11 +35,11 @@ namespace ChartsMix.Models
             return String.Format(result);
         }
 
-        public static async Task<string> FormGroups()
+        public static string FormGroups()
         {
             var result = "";
             ChartsDatabaseManager db = new ChartsDatabaseManager();
-            List<Group> listGroup = await  db.GetAllGroups();
+            List<Group> listGroup = db.GetAllGroups();
             foreach (Group group in listGroup)
             {
                 result += "<option value = " + group.Id + ">"  + group.Name + "</option >";

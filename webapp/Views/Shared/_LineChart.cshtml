@@ -73,12 +73,6 @@
         });
     }
 
-    function dateFormat(dateValue)
-    {
-        var temp = dateValue.replace(" - ", " ").split("/");
-        return temp[1] + "-" + temp[0] + "-" + temp[2] + ":00.000";
-    }
-
     function DreawChart(data,info) {
         
         Highcharts.chart('lineChart', {

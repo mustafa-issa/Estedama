@@ -8,7 +8,7 @@ using System.IO;
 using Newtonsoft.Json;
 using System.Web.Script.Serialization;
 using System.Threading.Tasks;
-
+using System;
 
 namespace ChartsMix.Controllers
 {
@@ -42,7 +42,7 @@ namespace ChartsMix.Controllers
             {
                 From = DateTime.Now.AddYears(-1),
                 To = DateTime.Now,
-                Ids = new int[] { 1, 2 }
+                Ids = new int[] { 22, 27 }
             };
             var list = await new ChartsDatabaseManager().GetGroupChart(model2);
             return Json(list, JsonRequestBehavior.AllowGet);
