@@ -1,5 +1,5 @@
 ﻿@model DateTime
-<div class="input-group date form_datetime col-md-12" data-date-format="dd/mm/yyyy - HH:ii p" >
+<div class="input-group date form_datetime col-md-12" data-date-format="dd/mm/yyyy - hh:ii" >
     @Html.TextBox("", (Model == DateTime.MinValue ? string.Empty : Model.ToString("dd/MM/yyyy")), new { @class = "form-control", @readonly = "readonly" })
     <span class="input-group-addon"><span class="glyphicon glyphicon-remove"></span></span>
     <span class="input-group-addon"><span class="icon-append fa fa-calendar"></span></span>

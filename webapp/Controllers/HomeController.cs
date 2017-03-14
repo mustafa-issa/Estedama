@@ -1,9 +1,6 @@
 ﻿using ChartsMix.Models;
 using System.Web.Mvc;
-using Highsoft.Web;
-using Highsoft.Web.Mvc;
 using Highsoft.Web.Mvc.Charts;
-using System;
 using System.Collections.Generic;
 using System.Runtime.Serialization.Json;
 using System.Text;
@@ -11,6 +8,7 @@ using System.IO;
 using Newtonsoft.Json;
 using System.Web.Script.Serialization;
 using System.Threading.Tasks;
+
 
 namespace ChartsMix.Controllers
 {

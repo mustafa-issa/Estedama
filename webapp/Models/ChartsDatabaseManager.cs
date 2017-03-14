@@ -297,7 +297,7 @@ namespace ChartsMix.Models
 
                         command.Parameters.Add(new SqlParameter("@Id", meterId));
                         command.Parameters.Add(new SqlParameter("@From", From));
-                        command.Parameters.Add(new SqlParameter("@Period", (int)period));
+                        command.Parameters.Add(new SqlParameter("@Period", (int) period));
                         command.Parameters.Add(new SqlParameter("@To", To));
 
                         await connection.OpenAsync();
@@ -374,7 +374,8 @@ namespace ChartsMix.Models
                     toDate = CleanDateTime(DateTime.Now).AddSeconds(-1);
                     details.Title = "By Day Report";
                     details.SubTitle = "Last 24 Hours Report";
-                    details.Dates = GenerateHours();
+
+                    (details.Dates = GenerateHours()).Reverse();
                     result = await HandleLineChart(24, fromDate, toDate, period, ids);
                     break;
                 case BarPeriod.Week:
@@ -396,7 +397,40 @@ namespace ChartsMix.Models
                     result = await HandleLineChart(12, fromDate, toDate, period, ids);
                     break;
                 case BarPeriod.Custom:
-                    details.Dates = null;
+                    double hours = (toDate - fromDate).TotalHours;
+                    if (hours >= 2 && hours < 48) //period more than 2 hours and less than 2 days
+                    {
+                        details.Title = "Hours Report";
+                        details.SubTitle = "Period from " + fromDate.ToString("dd/MM/yyyy HH:mm") + " to " + toDate.ToString("dd/MM/yyyy HH:mm") + " Report";
+                        fromDate = fromDate.AddHours(-1);
+                        toDate = toDate.AddHours(1);
+                        (details.Dates = GenerateHours((int)hours +1, toDate)).Reverse();
+                        result = HandleLineChart((int)hours + 1, fromDate, toDate, BarPeriod.Day, ids);
+                    }
+                    else if (hours >= 48 && hours <= 720) //period more than 2 days and less than or equal to 1 month
+                    {
+                        int days = (int)hours / 24 + 1;
+                        details.Title = "Days Report";
+                        details.SubTitle = "Period from " + fromDate.ToString("dd/MM/yyyy") + " to " + toDate.ToString("dd/MM/yyyy") + " Report";
+                        fromDate = fromDate.AddDays(-1);
+                        toDate = toDate.AddDays(1);
+                        (details.Dates = GenerateDays(days, toDate)).Reverse();
+                        result = HandleLineChart(days, fromDate, toDate, BarPeriod.Week, ids);
+                    }
+                    else if (hours > 720)
+                    {
+                        int months = (int)hours / 720 + 1;
+                        details.Title = "Months Report";
+                        details.SubTitle = "Period from " + fromDate.ToString("MM/yyyy") + " to " + toDate.ToString("MM/yyyy") + " Report";
+                        fromDate = fromDate.AddMonths(-1);
+                        toDate = toDate.AddMonths(1);
+                        (details.Dates = GenerateMonths(months, toDate)).Reverse();
+                        result = HandleLineChart(months, fromDate, toDate, BarPeriod.Year, ids);
+                    }
+                    else
+                    {
+                        return null;
+                    }
                     break;
                 default:
                     details.Dates = null;
@@ -427,30 +461,33 @@ namespace ChartsMix.Models
             return CleanDateTimeWeek(dateTime);
         }
 
-        private List<string> GenerateMonths()
+        private List<string> GenerateMonths(int months = 12, DateTime date = default(DateTime))
         {
-            var date = DateTime.Now;
+            if (date == default(DateTime))
+                date = DateTime.Now;
             List<string> dates = new List<string>();
-            for (int i = 1; i <= 12; i++)
-                dates.Add(date.AddMonths(-i).ToString("Y"));
+            for (int i = 1; i <= months; i++)
+                dates.Add(date.AddMonths(-i).ToString("MM/yy"));
             return dates;
         }
 
-        private List<string> GenerateDays()
+        private List<string> GenerateDays(int days = 7, DateTime date = default(DateTime))
         {
-            var date = DateTime.Now;
+            if (date == default(DateTime))
+                date = DateTime.Now;
             List<string> dates = new List<string>();
-            for (int i = 1; i <= 7; i++)
-                dates.Add(date.AddDays(-i).ToString("D"));
+            for (int i = 1; i <= days; i++)
+                dates.Add(date.AddDays(-i).ToString("dd"));
             return dates;
         }
 
-        private List<string> GenerateHours()
+        private List<string> GenerateHours(int hours = 24, DateTime date = default(DateTime))
         {
-            var date = DateTime.Now;
+            if(date == default(DateTime))
+                date = DateTime.Now;
             List<string> dates = new List<string>();
-            for (int i = 1; i <= 24; i++)
-                dates.Add(date.AddHours(-i).ToString("hh"));
+            for (int i = 1; i <= hours; i++)
+                dates.Add(date.AddHours(-i).ToString("HH"));
             return dates;
         }
         #endregion
