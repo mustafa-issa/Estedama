@@ -17,156 +17,106 @@ namespace ChartsMix.Controllers
     {
         private ChartsDatabaseManager db;
 
+        // GET: home/index
+        public async Task<ActionResult> Index()
+        {
+            try
+            {
+                var model = new DashbordModel();
+                await PrepareChartsModel(model);
+                return View(model);
+            }
+            catch (Exception ex)
+            {
+                return View();
+            }
+        }
+
         // Pie Chart Ajax 
         public async Task<ActionResult> GetPieChart(PieChartModel model)
         {
-            var result = await new ChartsDatabaseManager().GetPieChartMeters(model.Ids, model.From, model.To, model.period);
-            return Json(result, JsonRequestBehavior.AllowGet);
+            try
+            {
+                db = new ChartsDatabaseManager();
+                var result = await db.GetPieChartMeters(model.Ids, model.From, model.To, model.period);
+                return Json(result, JsonRequestBehavior.AllowGet);
+            }
+            catch(Exception ex)
+            {
+                return Json(ex, JsonRequestBehavior.AllowGet);
+            }
         }
-
 
         // Line Chart Ajax
         public async Task<ActionResult> GetLineChart(LineChartModel model)
         {
-            var db = new ChartsDatabaseManager();
-            var response = new LineChartDataModel();
-            var details = new ChartDetails();
-            response.Result = await db.GetLineChartMeters(details, model.From, model.To, model.period, model.Ids);
-            response.Details = details;
-            return Json(response, JsonRequestBehavior.AllowGet);
-        }
-
-        public async Task<ActionResult> GetGroupChart(LineChartModel model)
-        {
-            var model2 = new LineChartModel
+            try
             {
-                From = DateTime.Now.AddYears(-1),
-                To = DateTime.Now,
-                Ids = new int[] { 22, 27 }
-            };
-            var list = await new ChartsDatabaseManager().GetGroupChart(model2);
-            return Json(list, JsonRequestBehavior.AllowGet);
+                db = new ChartsDatabaseManager();
+                var response = new LineChartDataModel();
+                var details = new ChartDetails();
+                response.Result = await db.GetLineChartMeters(details, model.From, model.To, model.period, model.Ids);
+                response.Details = details;
+                return Json(response, JsonRequestBehavior.AllowGet);
+            }
+            catch(Exception ex)
+            {
+                return Json(ex, JsonRequestBehavior.AllowGet);
+            }
         }
 
-        // GET: home/index
-        public async Task<ActionResult> Index()
+        public async Task<ActionResult> GetGroupChart(GroupModel model)
         {
-            var model = new DashbordModel();
-            await PrepareChartsModel(model);
-            return View(model);
-        }
-
-        [HttpPost]
-        public async Task<ActionResult> Index(DashbordModel model, string GroupName)
-        {
-            await PrepareChartsModel(model);
-
-            PieGroupModel pieDrilldown = new PieGroupModel();
-            pieDrilldown = PieDrilldown();
-            model.pieGroupChartModel = pieDrilldown;
-            Group group = new Group();
-            group.Name = GroupName;
-            return View(model);
+            try
+            {
+                db = new ChartsDatabaseManager();
+                var list = await db.GetGroupChart(model);
+                return Json(list, JsonRequestBehavior.AllowGet);
+            }
+            catch(Exception ex)
+            {
+                return Json(ex, JsonRequestBehavior.AllowGet);
+            }
         }
 
         private async Task PrepareChartsModel(DashbordModel model)
         {
-            db = new ChartsDatabaseManager();
-            Meter meter = new Meter();
-            meter = await db.GetMeterTree();
-            model.PieModel.TreeRoot = meter;
-            model.lineChartModel.TreeRoot = meter;
-            model.barChartModel.TreeRoot = meter;
-            model.pieGroupChartModel.Group.TreeRoot = meter;
+            try
+            {
+                db = new ChartsDatabaseManager();
+                Meter meter = new Meter();
+                meter = await db.GetMeterTree();
+                model.PieModel.TreeRoot = meter;
+                model.lineChartModel.TreeRoot = meter;
+                model.barChartModel.TreeRoot = meter;
+                model.pieGroupChartModel.Group.TreeRoot = meter;
+            }
+            catch(Exception ex)
+            {
+                throw ex;
+            }
         }
 
         public async Task<ActionResult> AddGroup(Group model)
         {
-            var db = new ChartsDatabaseManager();
-            int response = await db.AddGroup(model);
-            return Json(response, JsonRequestBehavior.AllowGet);
+            try
+            {
+                db = new ChartsDatabaseManager();
+                int response = await db.AddGroup(model);
+                return Json(response, JsonRequestBehavior.AllowGet);
+            }
+            catch(Exception ex)
+            {
+                return Json(ex, JsonRequestBehavior.AllowGet);
+            }
         }
 
         public ActionResult GetPieGroupChart(PieGroupModel model)
         {
-            var db = new ChartsDatabaseManager();
+            db = new ChartsDatabaseManager();
             var response = new LineChartDataModel();
             var dates = new List<string>();
             return Json(response, JsonRequestBehavior.AllowGet);
-        }
-
-        public PieGroupModel PieDrilldown()
-        {
-            PieGroupModel model = new PieGroupModel();
-            var result = new List<PieSeriesData>();
-            var result1 = new List<PieSeriesData>();
-            var resultGroup = new List<PieSeriesData>();
-            result.Add(new PieSeriesData
-            {
-                Name = "1",
-                Y = 30
-            });
-            result.Add(new PieSeriesData
-            {
-                Name = "2",
-                Y = 40
-            });
-            result.Add(new PieSeriesData
-            {
-                Name = "3",
-                Y = 50
-            });
-
-            result1.Add(new PieSeriesData
-            {
-                Name = "4",
-                Y = 19
-            });
-            result1.Add(new PieSeriesData
-            {
-                Name = "5",
-                Y = 17
-            });
-            result1.Add(new PieSeriesData
-            {
-                Name = "6",
-                Y = 13
-            });
-
-            resultGroup.Add(new PieSeriesData
-            {
-                Name = "1",
-                Drilldown = "Microsoft Internet Explorer",
-                Y = 60
-            });
-            resultGroup.Add(new PieSeriesData
-            {
-                Name = "2",
-                Drilldown = "Microsoft Internet Explorer",
-                Y = 40
-            });
-            model.GroupData = resultGroup;
-
-
-
-            List<Series> Series = new List<Series>
-                {
-                    new PieSeries
-                    {
-                        Name = "Microsoft Internet Explorer",
-                        Id = "Microsoft Internet Explorer",
-                        Data = result
-                    },
-                    new PieSeries
-                    {
-                        Name = "Chrome",
-                        Id = "Chrome",
-                        Data = result1
-                    }
-                };
-            model.Series = Series;
-
-            return model;
         }
     }
 }
