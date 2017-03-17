@@ -47,8 +47,8 @@
     function GetGroupChart() {
         var model = {};
         model.Period = $('#ddlPieGroup').val();
-        model.From = $('#pieGroupChartModel_From').val();
-        model.To = $('#pieGroupChartModel_To').val();
+        model.From = dateFormat($('#pieGroupChartModel_From').val());
+        model.To = dateFormat($('#pieGroupChartModel_To').val());
         model.Ids = $('#ddlGroups').val();
 
         $.ajax({

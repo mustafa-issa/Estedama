@@ -2,7 +2,7 @@
 @using Highsoft.Web.Mvc.Charts
 @model Pie3DModel
 <div>
-    @using (Html.BeginForm("Index", "Home", FormMethod.Post))
+    @using (Html.BeginForm("Index", "Home"))
     {
         <div class="jarviswidget-editbox">
             <div class="widget-body">
@@ -29,58 +29,10 @@
         </div>
     }
     <div class="widget-body">
-            <div id="pieChart"></div>
-            @*@if (Model.Data != null)
-            {
-                @(Html.Highsoft().Highcharts(
-                                new Highcharts
-                                {
-                                    Chart = new Highsoft.Web.Mvc.Charts.Chart
-                                    {
-                                        Options3d = new ChartOptions3d
-                                        {
-                                            Enabled = true,
-                                            Alpha = 45,
-                                            Beta = 0
-                                        }
-                                    },
-                                    Title = new Title
-                                    {
-                                        Text = DateTime.Now.ToShortDateString()
-                                    },
-                                    Tooltip = new Tooltip
-                                    {
-                                        PointFormat = "{series.name}: <b>{point.percentage:.1f}%</b>"
-                                    },
-                                    PlotOptions = new PlotOptions
-                                    {
-                                        Pie = new PlotOptionsPie
-                                        {
-                                            AllowPointSelect = true,
-                                            Cursor = PlotOptionsPieCursor.Pointer,
-                                            Depth = 35,
-                                            DataLabels = new PlotOptionsPieDataLabels
-                                            {
-                                                Enabled = true,
-                                                Format = "<b>{point.name}</b>"
-                                            }
-                                        }
-                                    },
-                                    Series = new List<Series>
-                                    {
-                                    new PieSeries
-                                    {
-                                        Name = "Meters",
-                                        Data = Model.Data
-                                    },
-
-                                    }
-                                }
-                                , "pieChart")
-                )
-            }*@
+        <div id="pieChart"></div>
     </div>
 </div>
+
 
 <script>
 
@@ -117,9 +69,6 @@
         });
     }
     function DreawPieChart(arr) {
-
-
-
         Highcharts.chart('pieChart', {
             chart: {
                 type: 'pie',
@@ -180,5 +129,6 @@
         //    series: { data: data, name: 'meters'}
         //});
     }
+    
 
 </script>
