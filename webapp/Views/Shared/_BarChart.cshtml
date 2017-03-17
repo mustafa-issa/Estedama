@@ -12,7 +12,6 @@
                         @Html.EnumDropDownListFor(m => m.period, "Period", new { @class = "form-control", @id = "ddlBar" })
                     </div>
                 </div>
-
                 <div class="row" id="divDateBar" style="display : none">
                     <div class="col-md-3 form-group">
                         @Html.EditorFor(m => m.From)
@@ -21,7 +20,6 @@
                         @Html.EditorFor(m => m.To)
                     </div>
                 </div>
-
                 <div class="tree smart-form">
                     <ul>
                         @Html.Raw(Helpers.FormTreeView(Model.TreeRoot, "bar"))
@@ -34,60 +32,6 @@
     }
     <div class="widget-body">
         <div id="barChart"></div>
-        @*@if (Model.Data != null)
-        {
-            @(Html.Highsoft().Highcharts(
-                new Highcharts()
-                {
-                    Title = new Title
-                    {
-                        Text = "Monthly Average Rainfall"
-                    },
-                    Subtitle = new Subtitle
-                    {
-                        Text = "Source: WorldClimate.com"
-                    },
-
-                    XAxis = new List<XAxis>
-                    {
-                        new XAxis
-                        {
-                            Categories = Model.Dates
-                        }
-                            },
-                    YAxis = new List<YAxis>
-                            {
-                        new YAxis
-                        {
-                            Min = 0,
-                            Title = new YAxisTitle
-                            {
-                                Text = "Rainfall (mm)"
-                            }
-                        }
-                            },
-                    Tooltip = new Tooltip
-                    {
-                        HeaderFormat = "<span style='font-size:10px'>{point.key}</span><table style='font-size:12px'>",
-                        PointFormat = "<tr><td style='color:{series.color};padding:0'>{series.name}: </td><td style='padding:0'><b>{point.y:.1f}&nbsp;mm</b></td></tr>",
-                        FooterFormat = "</table>",
-                        Shared = true,
-                        UseHTML = true
-                    },
-                    PlotOptions = new PlotOptions
-                    {
-                        Column = new PlotOptionsColumn
-                        {
-                            PointPadding = 0.2,
-                            BorderWidth = 0
-                        }
-                    },
-                    Series = Model.Data
-                }
-                , "barChart")
-            )
-        }*@
-
     </div>
 
 
