@@ -10,31 +10,8 @@ namespace ChartsMix.Models
 {
     public class ChartsDatabaseManager
     {
-        public string _connectionString = ConfigurationManager.ConnectionStrings["cmixDbConnection"].ConnectionString;
-        public string ConnectionString
-        {
-            get
-            {
-                return _connectionString;
-            }
-            set
-            {
-                _connectionString = value;
-            }
-        }
-        public string _groupConnectionString = ConfigurationManager.ConnectionStrings["groups"].ConnectionString;
-        public string groupConnectionString
-        {
-            get
-            {
-                return _groupConnectionString;
-            }
-            set
-            {
-                _groupConnectionString = value;
-            }
-        }
-
+        private string _connectionString = ConfigurationManager.ConnectionStrings["cmixDbConnection"].ConnectionString;
+        private string _groupConnectionString = ConfigurationManager.ConnectionStrings["groups"].ConnectionString;
         private static T GetValue<T>(object readerValue, T defaultValue = default(T))
         {
             if (readerValue == DBNull.Value)
@@ -151,7 +128,14 @@ namespace ChartsMix.Models
 
         public async Task<Meter> GetMeterTree()
         {
-            return FormTree(await GetAllMeters());
+            try
+            {
+                return FormTree(await GetAllMeters());
+            }
+            catch(Exception ex)
+            {
+                throw ex;
+            }
         }
 
         private Meter FormTree(List<Meter> meters)
@@ -159,75 +143,111 @@ namespace ChartsMix.Models
             var server = new Meter();
             server.Name = "Server";
             server.Type = "system.base.Folder";
-            foreach (var meter in meters)
+            try
             {
-                var node = meters.FirstOrDefault(m => m.Id == meter.ParentId);
-                if (node == null)
+                foreach (var meter in meters)
                 {
-                    meter.Parent = server;
-                    server.Children.Add(meter);
-                }
-                else
-                {
-                    meter.Parent = node;
-                    node.Children.Add(meter);
+                    var node = meters.FirstOrDefault(m => m.Id == meter.ParentId);
+                    if (node == null)
+                    {
+                        meter.Parent = server;
+                        server.Children.Add(meter);
+                    }
+                    else
+                    {
+                        meter.Parent = node;
+                        node.Children.Add(meter);
+                    }
                 }
             }
-
+            catch(Exception ex)
+            {
+                throw ex;
+            }
             return server;
         }
 
-        public async Task<List<GroupDataModel>> GetGroupChart(LineChartModel model)
+        public async Task<List<GroupDataModel>> GetGroupChart(GroupModel model)
         {
-            var result = new List<GroupDataModel>();
-            var total = 0.0;
-            foreach(var groupId in model.Ids)
+            try
             {
-                var group = new GroupDataModel();
-                var ids = new List<int>();
-                using (SqlConnection connection = new SqlConnection(_groupConnectionString))
+                var result = new List<GroupDataModel>();
+                var total = 0.0;
+                switch (model.period)
                 {
-                    var command = new SqlCommand();
-                    command.Connection = connection;
-                    command.CommandType = System.Data.CommandType.Text;
-                    command.CommandText = "SELECT EntityId FROM Meters Where GroupId = @Id";
-                    command.Parameters.Add(new SqlParameter("@Id", groupId));
-                    await connection.OpenAsync();
-                    using (SqlDataReader reader = await command.ExecuteReaderAsync())
+                    case PiePeriod.Day:
+                        model.From = CleanDateTime(DateTime.Now).AddHours(-24);
+                        model.To = DateTime.Now;
+                        break;
+                    case PiePeriod.Week:
+                        model.From = CleanDateTime(DateTime.Now).AddDays(-7);
+                        model.To = DateTime.Now;
+                        break;
+                    case PiePeriod.Month:
+                        model.From = CleanDateTime(DateTime.Now).AddMonths(-1);
+                        model.To = DateTime.Now;
+                        break;
+                    case PiePeriod.Year:
+                        model.From = CleanDateTime(DateTime.Now).AddYears(-1);
+                        model.To = DateTime.Now;
+                        break;
+                    case PiePeriod.Custom:
+                        break;
+                    default:
+                        break;
+                }
+                foreach (var groupId in model.Ids)
+                {
+                    var group = new GroupDataModel();
+                    var ids = new List<int>();
+                    using (SqlConnection connection = new SqlConnection(_groupConnectionString))
                     {
-                        while (await reader.ReadAsync())
+                        var command = new SqlCommand();
+                        command.Connection = connection;
+                        command.CommandType = System.Data.CommandType.Text;
+                        command.CommandText = "SELECT EntityId FROM Meters Where GroupId = @Id";
+                        command.Parameters.Add(new SqlParameter("@Id", groupId));
+                        await connection.OpenAsync();
+                        using (SqlDataReader reader = await command.ExecuteReaderAsync())
                         {
-                            ids.Add(Convert.ToInt16(reader["EntityId"]));
-                        }
-                    }
-                    using (SqlConnection connection2 = new SqlConnection(_groupConnectionString))
-                    {
-                        var command2 = new SqlCommand();
-                        command2.Connection = connection2;
-                        command2.CommandType = System.Data.CommandType.Text;
-                        command2.CommandText = "SELECT Name FROM Groups WHERE Id = @Id";
-                        command2.Parameters.Add(new SqlParameter("@Id", groupId));
-                        await connection2.OpenAsync();
-                        using (SqlDataReader reader2 = await command2.ExecuteReaderAsync())
-                        {
-                            if (await reader2.ReadAsync())
+                            while (await reader.ReadAsync())
                             {
-                                group.name = group.drilldown = reader2["Name"].ToString();
+                                ids.Add(Convert.ToInt16(reader["EntityId"]));
                             }
                         }
+                        using (SqlConnection connection2 = new SqlConnection(_groupConnectionString))
+                        {
+                            var command2 = new SqlCommand();
+                            command2.Connection = connection2;
+                            command2.CommandType = System.Data.CommandType.Text;
+                            command2.CommandText = "SELECT Name FROM Groups WHERE Id = @Id";
+                            command2.Parameters.Add(new SqlParameter("@Id", groupId));
+                            await connection2.OpenAsync();
+                            using (SqlDataReader reader2 = await command2.ExecuteReaderAsync())
+                            {
+                                if (await reader2.ReadAsync())
+                                {
+                                    group.name = group.drilldown = reader2["Name"].ToString();
+                                }
+                            }
+                        }
+                        connection.Close();
                     }
-                    connection.Close();
+                    await GetGroupDrillDown(group, ids, model.From, model.To);
+                    result.Add(group);
+                    total += group.y;
                 }
-                await GetGroupDrillDown(group, ids, model.From, model.To);
-                result.Add(group);
-                total += group.y;
+                foreach (var group in result)
+                {
+                    group.y = group.y / total;
+                    group.y *= 100;
+                }
+                return result;
             }
-            foreach(var group in result)
+            catch(Exception ex)
             {
-                group.y = group.y / total;
-                group.y *= 100;
+                throw ex;
             }
-            return result;
         }
 
         private async Task GetGroupDrillDown(GroupDataModel group, List<int> ids,DateTime from, DateTime to)
@@ -364,79 +384,85 @@ namespace ChartsMix.Models
         // In Progress
         public async Task<List<CustomLineSeries>> GetLineChartMeters(ChartDetails details, DateTime fromDate, DateTime toDate, BarPeriod period, int[] ids)
         {
-            //details = new ChartDetails();
-            List<CustomLineSeries> result = new List<CustomLineSeries>();
-            switch (period)
+            try
             {
-                case BarPeriod.Day:
-                    fromDate = DateTime.Now.AddHours(-25);
-                    fromDate = CleanDateTime(fromDate);
-                    toDate = CleanDateTime(DateTime.Now).AddSeconds(-1);
-                    details.Title = "By Day Report";
-                    details.SubTitle = "Last 24 Hours Report";
+                List<CustomLineSeries> result = new List<CustomLineSeries>();
+                switch (period)
+                {
+                    case BarPeriod.Day:
+                        fromDate = DateTime.Now.AddHours(-25);
+                        fromDate = CleanDateTime(fromDate);
+                        toDate = CleanDateTime(DateTime.Now).AddSeconds(-1);
+                        details.Title = "By Day Report";
+                        details.SubTitle = "Last 24 Hours Report";
 
-                    (details.Dates = GenerateHours()).Reverse();
-                    result = await HandleLineChart(24, fromDate, toDate, period, ids);
-                    break;
-                case BarPeriod.Week:
-                    fromDate = DateTime.Now.AddDays(-8);
-                    fromDate = CleanDateTimeWeek(fromDate);
-                    toDate = CleanDateTimeWeek(DateTime.Now).AddSeconds(-1);
-                    details.Title = "Week Report";
-                    details.SubTitle = "Last 7 Days Report";
-                    (details.Dates = GenerateDays()).Reverse();
-                    result = await HandleLineChart(7, fromDate, toDate, period, ids);
-                    break;
-                case BarPeriod.Year:
-                    fromDate = DateTime.Now.AddMonths(-13);
-                    fromDate = CleanDateTimeYear(fromDate);
-                    toDate = CleanDateTimeYear(DateTime.Now).AddSeconds(-1);
-                    details.Title = "Year Report";
-                    details.SubTitle = "Last 12 Months Report";
-                    (details.Dates = GenerateMonths()).Reverse();
-                    result = await HandleLineChart(12, fromDate, toDate, period, ids);
-                    break;
-                case BarPeriod.Custom:
-                    double hours = (toDate - fromDate).TotalHours;
-                    if (hours >= 2 && hours < 48) //period more than 2 hours and less than 2 days
-                    {
-                        details.Title = "Hours Report";
-                        details.SubTitle = "Period from " + fromDate.ToString("dd/MM/yyyy HH:mm") + " to " + toDate.ToString("dd/MM/yyyy HH:mm") + " Report";
-                        fromDate = fromDate.AddHours(-1);
-                        toDate = toDate.AddHours(1);
-                        (details.Dates = GenerateHours((int)hours +1, toDate)).Reverse();
-                        result = await HandleLineChart((int)hours + 1, fromDate, toDate, BarPeriod.Day, ids);
-                    }
-                    else if (hours >= 48 && hours <= 720) //period more than 2 days and less than or equal to 1 month
-                    {
-                        int days = (int)hours / 24 + 1;
-                        details.Title = "Days Report";
-                        details.SubTitle = "Period from " + fromDate.ToString("dd/MM/yyyy") + " to " + toDate.ToString("dd/MM/yyyy") + " Report";
-                        fromDate = fromDate.AddDays(-1);
-                        toDate = toDate.AddDays(1);
-                        (details.Dates = GenerateDays(days, toDate)).Reverse();
-                        result = await HandleLineChart(days, fromDate, toDate, BarPeriod.Week, ids);
-                    }
-                    else if (hours > 720)
-                    {
-                        int months = (int)hours / 720 + 1;
-                        details.Title = "Months Report";
-                        details.SubTitle = "Period from " + fromDate.ToString("MM/yyyy") + " to " + toDate.ToString("MM/yyyy") + " Report";
-                        fromDate = fromDate.AddMonths(-1);
-                        toDate = toDate.AddMonths(1);
-                        (details.Dates = GenerateMonths(months, toDate)).Reverse();
-                        result = await HandleLineChart(months, fromDate, toDate, BarPeriod.Year, ids);
-                    }
-                    else
-                    {
-                        return null;
-                    }
-                    break;
-                default:
-                    details.Dates = null;
-                    break;
+                        (details.Dates = GenerateHours()).Reverse();
+                        result = await HandleLineChart(24, fromDate, toDate, period, ids);
+                        break;
+                    case BarPeriod.Week:
+                        fromDate = DateTime.Now.AddDays(-8);
+                        fromDate = CleanDateTimeWeek(fromDate);
+                        toDate = CleanDateTimeWeek(DateTime.Now).AddSeconds(-1);
+                        details.Title = "Week Report";
+                        details.SubTitle = "Last 7 Days Report";
+                        (details.Dates = GenerateDays()).Reverse();
+                        result = await HandleLineChart(7, fromDate, toDate, period, ids);
+                        break;
+                    case BarPeriod.Year:
+                        fromDate = DateTime.Now.AddMonths(-13);
+                        fromDate = CleanDateTimeYear(fromDate);
+                        toDate = CleanDateTimeYear(DateTime.Now).AddSeconds(-1);
+                        details.Title = "Year Report";
+                        details.SubTitle = "Last 12 Months Report";
+                        (details.Dates = GenerateMonths()).Reverse();
+                        result = await HandleLineChart(12, fromDate, toDate, period, ids);
+                        break;
+                    case BarPeriod.Custom:
+                        double hours = (toDate - fromDate).TotalHours;
+                        if (hours >= 2 && hours < 48) //period more than 2 hours and less than 2 days
+                        {
+                            details.Title = "Hours Report";
+                            details.SubTitle = "Period from " + fromDate.ToString("dd/MM/yyyy HH:mm") + " to " + toDate.ToString("dd/MM/yyyy HH:mm") + " Report";
+                            fromDate = fromDate.AddHours(-1);
+                            toDate = toDate.AddHours(1);
+                            (details.Dates = GenerateHours((int)hours + 1, toDate)).Reverse();
+                            result = await HandleLineChart((int)hours + 1, fromDate, toDate, BarPeriod.Day, ids);
+                        }
+                        else if (hours >= 48 && hours <= 720) //period more than 2 days and less than or equal to 1 month
+                        {
+                            int days = (int)hours / 24 + 1;
+                            details.Title = "Days Report";
+                            details.SubTitle = "Period from " + fromDate.ToString("dd/MM/yyyy") + " to " + toDate.ToString("dd/MM/yyyy") + " Report";
+                            fromDate = fromDate.AddDays(-1);
+                            toDate = toDate.AddDays(1);
+                            (details.Dates = GenerateDays(days, toDate)).Reverse();
+                            result = await HandleLineChart(days, fromDate, toDate, BarPeriod.Week, ids);
+                        }
+                        else if (hours > 720)
+                        {
+                            int months = (int)hours / 720 + 1;
+                            details.Title = "Months Report";
+                            details.SubTitle = "Period from " + fromDate.ToString("MM/yyyy") + " to " + toDate.ToString("MM/yyyy") + " Report";
+                            fromDate = fromDate.AddMonths(-1);
+                            toDate = toDate.AddMonths(1);
+                            (details.Dates = GenerateMonths(months, toDate)).Reverse();
+                            result = await HandleLineChart(months, fromDate, toDate, BarPeriod.Year, ids);
+                        }
+                        else
+                        {
+                            return null;
+                        }
+                        break;
+                    default:
+                        details.Dates = null;
+                        break;
+                }
+                return result;
             }
-            return result;
+            catch(Exception ex)
+            {
+                throw ex;
+            }
         }
 
         #region private Helpers
