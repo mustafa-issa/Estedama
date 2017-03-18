@@ -8,10 +8,10 @@
             <div class="widget-body">
                 <div class="row">
                     <div class="col-md-6 form-group">
-                        @Html.EnumDropDownListFor(m => m.period, "Period", new { @class = "form-control", @id = "ddlPieGroup" })
+                        @Html.EnumDropDownListFor(m => m.period, "Period", new { @class = "form-control", @id = "ddlBarGroup" })
                     </div>
                 </div>
-                <div class="row" id="divDatePieGroup" style="display : none">
+                <div class="row" id="divDateBarGroup" style="display : none">
                     <div class="col-md-6 form-group">
                         @Html.EditorFor(m => m.From)
                     </div>
@@ -31,25 +31,24 @@
                         </li>
 
                     </ul>
-                    @Html.Partial("_Groups", Model.Group, new ViewDataDictionary { TemplateInfo = new TemplateInfo { HtmlFieldPrefix = "GroupModel" } })
+                    @Html.Partial("_BarChartGroups", Model.Group, new ViewDataDictionary { TemplateInfo = new TemplateInfo { HtmlFieldPrefix = "BarGroupModel" } })
 
                 </div>
             </div>
-            <input type="button" class="btn btn-default" value="Show Groups Chart" id="getGroupChart" onclick="GetGroupChart()" />
+            <input type="button" class="btn btn-default" value="Show Groups Chart" id="getGroupChart" onclick="GetBarGroupChart()" />
         </div>
     }
     <div class="widget-body">
-        <div id="groupChart"></div>
+        <div id="BarGroupChart"></div>
     </div>
 </div>
 <script>
-
-    function GetGroupChart() {
+    function GetBarGroupChart() {
         var model = {};
-        model.Period = $('#ddlPieGroup').val();
-        model.From = dateFormat($('#pieGroupChartModel_From').val());
-        model.To = dateFormat($('#pieGroupChartModel_To').val());
-        model.Ids = $('#ddlGroups').val();
+        model.Period = $('#ddlBarGroup').val();
+        model.From = dateFormat($('#barGroupChartModel_From').val());
+        model.To = dateFormat($('#barGroupChartModel_To').val());
+        model.Ids = $('#ddlBarGroups').val();
 
         $.ajax({
             type: "GET",
@@ -68,17 +67,18 @@
                         id: data[i].name
                     });
                 }
-                DreawGroupedChart(data, drillDowns);
+                DrawBarGroupChart(data, drillDowns);
             },
             error: function (data) {
                 alert("sam");
             }
         });
     }
-    function DreawGroupedChart(data, arr) {
-        Highcharts.chart('groupChart', {
+
+    function DrawBarGroupChart(data, arr) {
+        Highcharts.chart('BarGroupChart', {
             chart: {
-                type: 'pie'
+                type: 'column'
             },
             title: {
                 text: 'Browser market shares. January, 2015 to May, 2015'
@@ -93,7 +93,6 @@
                 title: {
                     text: 'Total percent market share'
                 }
-
             },
             legend: {
                 enabled: false

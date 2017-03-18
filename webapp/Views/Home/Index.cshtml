@@ -45,7 +45,16 @@
             </article>
         </div>
         <!--End Pie Chart-->
-
+        <div class="row">
+            <article class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
+                <div class="jarviswidget" id="wid-id-6">
+                    <header>
+                        <h2>Bar Group Chart</h2>
+                    </header>
+                    @Html.Partial("_BarGroup", Model.pieGroupChartModel, new ViewDataDictionary { TemplateInfo = new TemplateInfo { HtmlFieldPrefix = "barGroupChartModel" } })
+                </div>
+            </article>
+        </div>
 
         <div class="row">
 
@@ -114,11 +123,20 @@
         });
 
         $('#ddlPieGroup').change(function () {
-            if ($('#ddlPieGroup').val() == 4) {
+            if ($('#ddlPieGroup').val() == 5) {
                 $('#divDatePieGroup').css('display', '');
             }
             else {
                 $('#divDatePieGroup').css('display', 'none');
+            }
+        });
+
+        $('#ddlBarGroup').change(function () {
+            if ($('#ddlBarGroup').val() == 5) {
+                $('#divDateBarGroup').css('display', '');
+            }
+            else {
+                $('#divDateBarGroup').css('display', 'none');
             }
         });
 
