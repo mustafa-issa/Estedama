@@ -11,7 +11,7 @@ namespace SmartAdminMvc
         public static void RegisterBundles(BundleCollection bundles)
         {
             bundles.Add(new StyleBundle("~/content/smartadmin").IncludeDirectory("~/content/css", "*.min.css"));
-
+            
             bundles.Add(new ScriptBundle("~/scripts/smartadmin").Include(
                 "~/scripts/app.config.js",
                 "~/scripts/plugin/jquery-touch/jquery.ui.touch-punch.min.js",
@@ -59,7 +59,6 @@ namespace SmartAdminMvc
                 "~/scripts/plugin/vectormap/jquery-jvectormap-1.2.2.min.js",
                 "~/scripts/plugin/vectormap/jquery-jvectormap-world-mill-en.js"
                 ));
-
             BundleTable.EnableOptimizations = true;
         }
     }

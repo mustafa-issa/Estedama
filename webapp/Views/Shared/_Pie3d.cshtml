@@ -29,57 +29,7 @@
         </div>
     }
     <div class="widget-body">
-            <div id="pieChart"></div>
-            @*@if (Model.Data != null)
-            {
-                @(Html.Highsoft().Highcharts(
-                                new Highcharts
-                                {
-                                    Chart = new Highsoft.Web.Mvc.Charts.Chart
-                                    {
-                                        Options3d = new ChartOptions3d
-                                        {
-                                            Enabled = true,
-                                            Alpha = 45,
-                                            Beta = 0
-                                        }
-                                    },
-                                    Title = new Title
-                                    {
-                                        Text = DateTime.Now.ToShortDateString()
-                                    },
-                                    Tooltip = new Tooltip
-                                    {
-                                        PointFormat = "{series.name}: <b>{point.percentage:.1f}%</b>"
-                                    },
-                                    PlotOptions = new PlotOptions
-                                    {
-                                        Pie = new PlotOptionsPie
-                                        {
-                                            AllowPointSelect = true,
-                                            Cursor = PlotOptionsPieCursor.Pointer,
-                                            Depth = 35,
-                                            DataLabels = new PlotOptionsPieDataLabels
-                                            {
-                                                Enabled = true,
-                                                Format = "<b>{point.name}</b>"
-                                            }
-                                        }
-                                    },
-                                    Series = new List<Series>
-                                    {
-                                    new PieSeries
-                                    {
-                                        Name = "Meters",
-                                        Data = Model.Data
-                                    },
-
-                                    }
-                                }
-                                , "pieChart")
-                )
-            }*@
-    </div>
+            <div id="pieChart"></div></div>
 </div>
 
 <script>
@@ -87,8 +37,8 @@
     function GetPieChart() {
         var model = {};
         model.Period = $('#ddlPie').val();
-        model.From = $('#From').val();
-        model.To = $('#To').val();
+        model.From = dateFormat($('#PieModel_From').val());
+        model.To = dateFormat($('#PieModel_To').val());
         model.Ids = [];
         $('input[name=pieIds]:checked').each(function () {
             model.Ids.push($(this).attr('value'));
@@ -109,17 +59,14 @@
                         name: data[i].Name
                     });
                 }
-                DreawPieChart(arr);
+                DrawPieChart(arr);
             },
             error: function (err) {
                 alert(err);
             }
         });
     }
-    function DreawPieChart(arr) {
-
-
-
+    function DrawPieChart(arr) {
         Highcharts.chart('pieChart', {
             chart: {
                 type: 'pie',
@@ -130,7 +77,7 @@
                 }
             },
             title: {
-                text: 'Browser market shares at a specific website, 2014'
+                text: 'Pie Chart Breakdown'
             },
             tooltip: {
                 pointFormat: '{series.name}: <b>{point.percentage:.1f}%</b>'
@@ -152,33 +99,6 @@
                 data: arr
             }]
         });
-
-
-        //Highcharts.chart('pieChart', {
-        //    chart: {
-        //        type: 'pie'
-        //    },
-        //    title: {
-        //        text: 'Browser market shares January, 2015 to May, 2015'
-        //    },
-        //    tooltip: {
-        //        pointFormat: '{series.name}: <b>{point.percentage:.1f}%</b>'
-        //    },
-        //    plotOptions: {
-        //        pie: {
-        //            allowPointSelect: true,
-        //            cursor: 'pointer',
-        //            dataLabels: {
-        //                enabled: true,
-        //                format: '<b>{point.name}</b>: {point.percentage:.1f} %',
-        //                style: {
-        //                    color: (Highcharts.theme && Highcharts.theme.contrastTextColor) || 'black'
-        //                }
-        //            }
-        //        }
-        //    },
-        //    series: { data: data, name: 'meters'}
-        //});
     }
 
 </script>
