@@ -29,8 +29,9 @@
         </div>
     }
     <div class="widget-body">
-        <div id="pieChart"></div>
-    </div>
+
+            <div id="pieChart"></div></div>
+
 </div>
 
 
@@ -39,8 +40,8 @@
     function GetPieChart() {
         var model = {};
         model.Period = $('#ddlPie').val();
-        model.From = $('#From').val();
-        model.To = $('#To').val();
+        model.From = dateFormat($('#PieModel_From').val());
+        model.To = dateFormat($('#PieModel_To').val());
         model.Ids = [];
         $('input[name=pieIds]:checked').each(function () {
             model.Ids.push($(this).attr('value'));
@@ -61,14 +62,16 @@
                         name: data[i].Name
                     });
                 }
-                DreawPieChart(arr);
+                DrawPieChart(arr);
             },
             error: function (err) {
                 alert(err);
             }
         });
     }
-    function DreawPieChart(arr) {
+
+    function DrawPieChart(arr) {
+
         Highcharts.chart('pieChart', {
             chart: {
                 type: 'pie',
@@ -79,7 +82,7 @@
                 }
             },
             title: {
-                text: 'Browser market shares at a specific website, 2014'
+                text: 'Pie Chart Breakdown'
             },
             tooltip: {
                 pointFormat: '{series.name}: <b>{point.percentage:.1f}%</b>'
@@ -101,33 +104,6 @@
                 data: arr
             }]
         });
-
-
-        //Highcharts.chart('pieChart', {
-        //    chart: {
-        //        type: 'pie'
-        //    },
-        //    title: {
-        //        text: 'Browser market shares January, 2015 to May, 2015'
-        //    },
-        //    tooltip: {
-        //        pointFormat: '{series.name}: <b>{point.percentage:.1f}%</b>'
-        //    },
-        //    plotOptions: {
-        //        pie: {
-        //            allowPointSelect: true,
-        //            cursor: 'pointer',
-        //            dataLabels: {
-        //                enabled: true,
-        //                format: '<b>{point.name}</b>: {point.percentage:.1f} %',
-        //                style: {
-        //                    color: (Highcharts.theme && Highcharts.theme.contrastTextColor) || 'black'
-        //                }
-        //            }
-        //        }
-        //    },
-        //    series: { data: data, name: 'meters'}
-        //});
     }
     
 

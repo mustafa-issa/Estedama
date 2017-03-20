@@ -1,7 +1,7 @@
 ﻿@using ChartsMix.Models
 @model Group
-<div id="myTabContent1" class="tab-content padding-10">
-    <div class="tab-pane fade in active" id="s1">
+<div id="barGroupTabs" class="tab-content padding-10">
+    <div class="tab-pane fade in active" id="bar1">
         <div>
             <select multiple style="width:100%" id="ddlBarGroups" class="select2">
                 @Html.Raw(Helpers.FormGroups())
@@ -12,14 +12,14 @@
         </div>
     </div>
 
-    <div class="tab-pane fade" id="s2">
+    <div class="tab-pane fade" id="bar2">
         <div class="form-group">
             <div class="row">
                 <div class="col-md-6">
-                    <input id="BarGroupName" type="text" class="form-control" name="GroupName" placeholder="Group Name" />
+                    <input id="BarGroupName" type="text" class="form-control" name="BarGroupName" placeholder="Group Name" />
                 </div>
                 <div class="col-md-6">
-                    <input class="btn btn-primary btn-sm" type="button" value="Add" onclick="AddGroup()" />
+                    <input class="btn btn-primary btn-sm" type="button" value="Add" onclick="AddBarGroup()" />
                 </div>
             </div>
         </div>
@@ -35,7 +35,7 @@
 
 <script>
 
-    function AddGroup() {
+    function AddBarGroup() {
         var model = {};
         model.Name = $('#BarGroupName').val();
         model.Ids = [];

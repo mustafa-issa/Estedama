@@ -17,7 +17,7 @@
         <div class="form-group">
             <div class="row">
                 <div class="col-md-6">
-                    <input id="GroupName" type="text" class="form-control" name="GroupName" placeholder="Group Name" />
+                    <input id="pieGroupName" type="text" class="form-control" name="pieGroupName" placeholder="Group Name" />
                 </div>
                 <div class="col-md-6">
                     <input class="btn btn-primary btn-sm" type="button" value="Add" onclick="AddGroup()"/>
@@ -39,7 +39,7 @@
 
     function AddGroup() {
         var model = {};
-        model.Name = $('#GroupName').val();
+        model.Name = $('#pieGroupName').val();
         model.Ids = [];
         $('input[name=groupPieIds]:checked').each(function () {
             model.Ids.push($(this).attr('value'));

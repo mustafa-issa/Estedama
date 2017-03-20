@@ -1,4 +1,4 @@
-﻿@using ChartsMix.Models
+@using ChartsMix.Models
 @using Highsoft.Web.Mvc.Charts
 @model BarChartModel
 
@@ -12,6 +12,7 @@
                         @Html.EnumDropDownListFor(m => m.period, "Period", new { @class = "form-control", @id = "ddlBar" })
                     </div>
                 </div>
+
                 <div class="row" id="divDateBar" style="display : none">
                     <div class="col-md-3 form-group">
                         @Html.EditorFor(m => m.From)
@@ -20,6 +21,7 @@
                         @Html.EditorFor(m => m.To)
                     </div>
                 </div>
+
                 <div class="tree smart-form">
                     <ul>
                         @Html.Raw(Helpers.FormTreeView(Model.TreeRoot, "bar"))
@@ -33,11 +35,7 @@
     <div class="widget-body">
         <div id="barChart"></div>
     </div>
-
-
-
 </div>
-
 
 <script>
 
@@ -84,7 +82,7 @@
                 type: 'column'
             },
             title: {
-                text: info.Title
+                text: info.Title + ' Of Consumption'
             },
             subtitle: {
                 text: info.SubTitle
