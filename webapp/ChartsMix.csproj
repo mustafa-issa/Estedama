@@ -14,7 +14,7 @@
     <RootNamespace>ChartsMix</RootNamespace>
     <AssemblyName>ChartsMix</AssemblyName>
     <TargetFrameworkVersion>v4.5.2</TargetFrameworkVersion>
-    <UseIISExpress>false</UseIISExpress>
+    <UseIISExpress>true</UseIISExpress>
     <IISExpressSSLPort />
     <IISExpressAnonymousAuthentication />
     <IISExpressWindowsAuthentication />
@@ -45,40 +45,44 @@
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="Antlr3.Runtime">
-      <HintPath>D:\ChartsMix\packages\Antlr.3.5.0.2\lib\Antlr3.Runtime.dll</HintPath>
+      <HintPath>..\..\..\Desktop\ASP.NetMVC5_Full_Version\packages\Antlr.3.5.0.2\lib\Antlr3.Runtime.dll</HintPath>
     </Reference>
-    <Reference Include="EntityFramework">
-      <HintPath>D:\ChartsMix\packages\EntityFramework.6.1.0\lib\net45\EntityFramework.dll</HintPath>
+    <Reference Include="EntityFramework, Version=6.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089, processorArchitecture=MSIL">
+      <HintPath>..\packages\EntityFramework.6.1.3\lib\net45\EntityFramework.dll</HintPath>
+      <Private>True</Private>
     </Reference>
-    <Reference Include="EntityFramework.SqlServer">
-      <HintPath>D:\ChartsMix\packages\EntityFramework.6.1.0\lib\net45\EntityFramework.SqlServer.dll</HintPath>
+    <Reference Include="EntityFramework.SqlServer, Version=6.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089, processorArchitecture=MSIL">
+      <HintPath>..\packages\EntityFramework.6.1.3\lib\net45\EntityFramework.SqlServer.dll</HintPath>
+      <Private>True</Private>
     </Reference>
     <Reference Include="Highcharts, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>D:\ChartsMix\packages\Highcharts.Net.2.0.3\lib\net4.0\Highcharts.dll</HintPath>
+      <HintPath>..\packages\Highcharts.Net.2.0.3\lib\net4.0\Highcharts.dll</HintPath>
       <Private>True</Private>
     </Reference>
     <Reference Include="Highcharts.MVC, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>D:\ChartsMix\packages\Highcharts.Net.2.0.3\lib\net4.0\Highcharts.MVC.dll</HintPath>
+      <HintPath>..\packages\Highcharts.Net.2.0.3\lib\net4.0\Highcharts.MVC.dll</HintPath>
       <Private>True</Private>
     </Reference>
-    <Reference Include="Highcharts.Web.Mvc, Version=5.0.6269.833, Culture=neutral, PublicKeyToken=90b74bd27a557bd3, processorArchitecture=MSIL">
-      <HintPath>D:\ChartsMix\packages\Highsoft.Highcharts.5.0.6269.833\lib\net40\Highcharts.Web.Mvc.dll</HintPath>
+    <Reference Include="Highcharts.Web.Mvc, Version=5.0.6289.14466, Culture=neutral, PublicKeyToken=90b74bd27a557bd3, processorArchitecture=MSIL">
+      <HintPath>..\packages\Highsoft.Highcharts.5.0.6289.14466\lib\net40\Highcharts.Web.Mvc.dll</HintPath>
       <Private>True</Private>
     </Reference>
-    <Reference Include="Microsoft.AspNet.Identity.Core">
-      <HintPath>D:\ChartsMix\packages\Microsoft.AspNet.Identity.Core.2.1.0\lib\net45\Microsoft.AspNet.Identity.Core.dll</HintPath>
+    <Reference Include="Microsoft.AspNet.Identity.Core, Version=2.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <HintPath>..\packages\Microsoft.AspNet.Identity.Core.2.2.1\lib\net45\Microsoft.AspNet.Identity.Core.dll</HintPath>
+      <Private>True</Private>
     </Reference>
-    <Reference Include="Microsoft.AspNet.Identity.EntityFramework">
-      <HintPath>D:\ChartsMix\packages\Microsoft.AspNet.Identity.EntityFramework.2.1.0\lib\net45\Microsoft.AspNet.Identity.EntityFramework.dll</HintPath>
+    <Reference Include="Microsoft.AspNet.Identity.EntityFramework, Version=2.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <HintPath>..\packages\Microsoft.AspNet.Identity.EntityFramework.2.2.1\lib\net45\Microsoft.AspNet.Identity.EntityFramework.dll</HintPath>
+      <Private>True</Private>
     </Reference>
     <Reference Include="Microsoft.CSharp" />
     <Reference Include="Microsoft.Web.Infrastructure, Version=1.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
       <Private>True</Private>
-      <HintPath>..\packages\Microsoft.Web.Infrastructure.1.0.0.0\lib\net40\Microsoft.Web.Infrastructure.dll</HintPath>
+      <HintPath>..\..\..\Desktop\ASP.NetMVC5_Full_Version\packages\Microsoft.Web.Infrastructure.1.0.0.0\lib\net40\Microsoft.Web.Infrastructure.dll</HintPath>
     </Reference>
-    <Reference Include="Newtonsoft.Json, Version=4.5.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>D:\ChartsMix\packages\Newtonsoft.Json.6.0.5\lib\net45\Newtonsoft.Json.dll</HintPath>
+    <Reference Include="Newtonsoft.Json, Version=10.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
+      <HintPath>..\packages\Newtonsoft.Json.10.0.1\lib\net45\Newtonsoft.Json.dll</HintPath>
+      <Private>True</Private>
     </Reference>
     <Reference Include="System.Data.DataSetExtensions" />
     <Reference Include="System.Runtime.Serialization" />
@@ -90,34 +94,34 @@
     <Reference Include="System" />
     <Reference Include="System.Data" />
     <Reference Include="System.Web.Extensions" />
-    <Reference Include="System.Web.Helpers, Version=2.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>D:\ChartsMix\webapp\bin\System.Web.Helpers.dll</HintPath>
+    <Reference Include="System.Web.Helpers, Version=3.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <HintPath>..\packages\Microsoft.AspNet.WebPages.3.2.3\lib\net45\System.Web.Helpers.dll</HintPath>
+      <Private>True</Private>
     </Reference>
-    <Reference Include="System.Web.Mvc, Version=4.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>D:\ChartsMix\webapp\bin\System.Web.Mvc.dll</HintPath>
+    <Reference Include="System.Web.Mvc, Version=5.2.3.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <HintPath>..\packages\Microsoft.AspNet.Mvc.5.2.3\lib\net45\System.Web.Mvc.dll</HintPath>
+      <Private>True</Private>
     </Reference>
     <Reference Include="System.Web.Optimization">
-      <HintPath>D:\ChartsMix\packages\Microsoft.AspNet.Web.Optimization.1.1.3\lib\net40\System.Web.Optimization.dll</HintPath>
-    </Reference>
-    <Reference Include="System.Web.Razor, Version=2.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>D:\ChartsMix\webapp\bin\System.Web.Razor.dll</HintPath>
-    </Reference>
-    <Reference Include="System.Web.WebPages, Version=2.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>D:\ChartsMix\webapp\bin\System.Web.WebPages.dll</HintPath>
+      <HintPath>..\..\..\Desktop\ASP.NetMVC5_Full_Version\packages\Microsoft.AspNet.Web.Optimization.1.1.3\lib\net40\System.Web.Optimization.dll</HintPath>
     </Reference>
     <Reference Include="System.Drawing" />
     <Reference Include="System.Web" />
-    <Reference Include="System.Web.WebPages.Deployment, Version=2.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>D:\ChartsMix\webapp\bin\System.Web.WebPages.Deployment.dll</HintPath>
+    <Reference Include="System.Web.Razor, Version=3.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <HintPath>..\packages\Microsoft.AspNet.Razor.3.2.3\lib\net45\System.Web.Razor.dll</HintPath>
+      <Private>True</Private>
     </Reference>
-    <Reference Include="System.Web.WebPages.Razor, Version=2.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>D:\ChartsMix\webapp\bin\System.Web.WebPages.Razor.dll</HintPath>
+    <Reference Include="System.Web.WebPages, Version=3.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <HintPath>..\packages\Microsoft.AspNet.WebPages.3.2.3\lib\net45\System.Web.WebPages.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="System.Web.WebPages.Deployment, Version=3.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <HintPath>..\packages\Microsoft.AspNet.WebPages.3.2.3\lib\net45\System.Web.WebPages.Deployment.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="System.Web.WebPages.Razor, Version=3.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <HintPath>..\packages\Microsoft.AspNet.WebPages.3.2.3\lib\net45\System.Web.WebPages.Razor.dll</HintPath>
+      <Private>True</Private>
     </Reference>
     <Reference Include="System.Xml" />
     <Reference Include="System.Configuration" />
@@ -125,7 +129,7 @@
     <Reference Include="System.EnterpriseServices" />
     <Reference Include="System.Xml.Linq" />
     <Reference Include="WebGrease">
-      <HintPath>D:\ChartsMix\packages\WebGrease.1.6.0\lib\WebGrease.dll</HintPath>
+      <HintPath>..\..\..\Desktop\ASP.NetMVC5_Full_Version\packages\WebGrease.1.6.0\lib\WebGrease.dll</HintPath>
     </Reference>
   </ItemGroup>
   <ItemGroup>
@@ -285,6 +289,7 @@
     <Content Include="Content\fonts\fontawesome4.2\fontawesome-webfont.svg" />
     <Content Include="Content\fonts\fontawesome4.2\readme.txt" />
     <Content Include="Content\fonts\glyphicons-halflings-regular.svg" />
+    <Content Include="Content\fonts\glyphicons-halflings-regular.woff" />
     <Content Include="Content\img\04.jpg" />
     <Content Include="Content\img\ajax-loader.gif" />
     <Content Include="Content\img\alpha.png" />
@@ -524,7 +529,6 @@
     <Content Include="Content\fonts\FontAwesome.otf" />
     <Content Include="Content\fonts\glyphicons-halflings-regular.eot" />
     <Content Include="Content\fonts\glyphicons-halflings-regular.ttf" />
-    <Content Include="Content\fonts\glyphicons-halflings-regular.woff" />
     <Content Include="Content\sound\bigbox.ogg" />
     <Content Include="Content\sound\messagebox.ogg" />
     <Content Include="Content\sound\smallbox.ogg" />
@@ -1015,82 +1019,16 @@
     <Content Include="Views\Account\_ErrorText.cshtml" />
     <Content Include="Views\Account\_LoginText.cshtml" />
     <Content Include="Views\Account\_SocialMedia.cshtml" />
-    <Content Include="Views\Home\Inbox.cshtml" />
-    <Content Include="Views\Home\Widgets.cshtml" />
-    <Content Include="Views\Graphs\Flot.cshtml" />
-    <Content Include="Views\Graphs\Morris.cshtml" />
-    <Content Include="Views\Graphs\Inline.cshtml" />
-    <Content Include="Views\Graphs\Dygraphs.cshtml" />
-    <Content Include="Views\Graphs\ChartJS.cshtml" />
-    <Content Include="Views\Tables\Normal.cshtml" />
-    <Content Include="Views\Tables\DataTables.cshtml" />
-    <Content Include="Views\Tables\JQGrid.cshtml" />
-    <Content Include="Views\Forms\SmartElements.cshtml" />
-    <Content Include="Views\Forms\Templates.cshtml" />
-    <Content Include="Views\Forms\Validation.cshtml" />
-    <Content Include="Views\Forms\Bootstrap.cshtml" />
-    <Content Include="Views\Forms\Plugins.cshtml" />
-    <Content Include="Views\Forms\Wizards.cshtml" />
-    <Content Include="Views\Forms\Editors.cshtml" />
-    <Content Include="Views\Forms\Dropzone.cshtml" />
-    <Content Include="Views\Forms\Cropping.cshtml" />
-    <Content Include="Views\Element\General.cshtml" />
-    <Content Include="Views\Element\Buttons.cshtml" />
-    <Content Include="Views\Icons\FontAwesome.cshtml" />
-    <Content Include="Views\Icons\GlyphIcons.cshtml" />
-    <Content Include="Views\Icons\Flags.cshtml" />
-    <Content Include="Views\Icons\Grid.cshtml" />
-    <Content Include="Views\Icons\TreeView.cshtml" />
-    <Content Include="Views\Icons\NestedLists.cshtml" />
-    <Content Include="Views\Icons\JQueryUI.cshtml" />
-    <Content Include="Views\Icons\Typography.cshtml" />
-    <Content Include="Views\Forum\GeneralView.cshtml" />
-    <Content Include="Views\Forum\TopicView.cshtml" />
-    <Content Include="Views\Forum\PostView.cshtml" />
-    <Content Include="Views\AppViews\Profile.cshtml" />
-    <Content Include="Views\AppViews\TimeLine.cshtml" />
-    <Content Include="Views\Misc\Pricing.cshtml" />
-    <Content Include="Views\Misc\Invoice.cshtml" />
     <Content Include="Views\Account\Lock.cshtml" />
-    <Content Include="Views\Misc\Blank.cshtml" />
-    <Content Include="Views\Misc\EmailTemplate.cshtml" />
-    <Content Include="Views\Misc\Search.cshtml" />
-    <Content Include="Views\Misc\CKEditor.cshtml" />
-    <Content Include="Views\Home\Chat.cshtml" />
-    <Content Include="Views\Intel\Settings.cshtml" />
-    <Content Include="Views\Intel\Skins.cshtml" />
-    <Content Include="Views\AppViews\Gallery.cshtml" />
-    <Content Include="Views\EmailTemplates\Basic.cshtml" />
-    <Content Include="Views\EmailTemplates\SideBar.cshtml" />
-    <Content Include="Views\EmailTemplates\Hero.cshtml" />
-    <Content Include="Views\EmailTemplates\SideBarHero.cshtml" />
-    <Content Include="Views\EmailTemplates\NewsLetter.cshtml" />
-    <Content Include="Views\Misc\Error404.cshtml" />
-    <Content Include="Views\Misc\Error500.cshtml" />
-    <Content Include="Views\AppViews\Blog.cshtml" />
-    <Content Include="Views\AppViews\Projects.cshtml" />
-    <Content Include="Views\Intel\AppLayout.cshtml" />
-    <Content Include="Views\Features\Calendar.cshtml" />
-    <Content Include="Views\Features\Googlemap.cshtml" />
-    <Content Include="Views\Commerce\Orders.cshtml" />
-    <Content Include="Views\Commerce\ProductView.cshtml" />
-    <Content Include="Views\Commerce\Detail.cshtml" />
     <Content Include="Scripts\plugin\bootstrap-tags\dist\bootstrap-tagsinput.min.js.map" />
-    <Content Include="Views\Forms\Validator.cshtml" />
-    <Content Include="Views\Misc\Versions.cshtml" />
-    <Content Include="Views\Graphs\HighCharts.cshtml" />
     <Content Include="Views\Home\Index.cshtml" />
-    <Content Include="Views\Charts\ColumnBasic.cshtml" />
-    <Content Include="Views\Home\ColumnBasic.cshtml" />
-    <Content Include="Views\Home\LineLabels.cshtml" />
     <Content Include="Views\Shared\_Pie3d.cshtml" />
-    <Content Include="Views\Shared\_BarChart.cshtml" />
     <Content Include="Views\Shared\_LineChart.cshtml" />
     <Content Include="Views\Shared\_Groups.cshtml" />
-    <Content Include="Views\Charts\Pie3D.cshtml" />
     <Content Include="Views\Shared\_PieGroup.cshtml" />
     <Content Include="Views\Shared\_BarChartGroups.cshtml" />
     <Content Include="Views\Shared\EditorTemplates\DateTime.cshtml" />
+    <Content Include="Views\Shared\_BarChart.cshtml" />
     <None Include="Web.Debug.config">
       <DependentUpon>Web.config</DependentUpon>
     </None>
@@ -1116,17 +1054,7 @@
     <Compile Include="Areas\Landing\Controllers\LandingController.cs" />
     <Compile Include="Areas\Landing\LandingAreaRegistration.cs" />
     <Compile Include="Controllers\AccountController.cs" />
-    <Compile Include="Controllers\AppViewsController.cs" />
-    <Compile Include="Controllers\CommerceController.cs" />
-    <Compile Include="Controllers\ElementController.cs" />
-    <Compile Include="Controllers\EmailTemplatesController.cs" />
-    <Compile Include="Controllers\FormsController.cs" />
-    <Compile Include="Controllers\ForumController.cs" />
-    <Compile Include="Controllers\FeaturesController.cs" />
     <Compile Include="Controllers\HomeController.cs" />
-    <Compile Include="Controllers\IconsController.cs" />
-    <Compile Include="Controllers\IntelController.cs" />
-    <Compile Include="Controllers\MiscController.cs" />
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>
@@ -1172,7 +1100,7 @@
           <AutoAssignPort>True</AutoAssignPort>
           <DevelopmentServerPort>56110</DevelopmentServerPort>
           <DevelopmentServerVPath>/</DevelopmentServerVPath>
-          <IISUrl>http://localhost/ChartsMix</IISUrl>
+          <IISUrl>http://localhost:56110/</IISUrl>
           <NTLMAuthentication>False</NTLMAuthentication>
           <UseCustomServer>False</UseCustomServer>
           <CustomServerUrl>

@@ -52,13 +52,13 @@
             dataType: "json",
             traditional: true,
             success: function (data) {
-                $('#ddlGroups').append($("<option></option>").attr("value", data).text($('#GroupName').val()));
-                $('#informationMessage').append("<div class='alert alert-success col-md-8 col-md-offset-2 fade in'><button class='close' data-dismiss='alert'>×</button><i class='fa-fw fa fa-check'></i><strong>Success</strong> Group " + $('#GroupName').val() + " has been added.</div>")
+                $('#ddlGroups').append($("<option></option>").attr("value", data).text($('#pieGroupName').val()));
+                $('#ddlBarGroups').append($("<option></option>").attr("value", data).text($('#pieGroupName').val()));
+                messageSuccess("Group " + $('#pieGroupName').val() + " has been added.");
                 $('#s1toggle').click();
             },
             error: function (data, dates) {
-                $('#informationMessage').append("<div class='alert alert-danger col-md-8 col-md-offset-2 fade in'><button class='close' data-dismiss='alert'>×</button><i class='fa-fw fa fa-check'></i><strong>Success</strong> Group " + $('#GroupName').val() + " hasn't been added.</div>")
-                $('#s1toggle').click();
+                messageFailure("Group " + $('#pieGroupName').val() + " hasn't been added.");
             }
         });
     }

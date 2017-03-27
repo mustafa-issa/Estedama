@@ -7,8 +7,11 @@
         <div class="jarviswidget-editbox">
             <div class="widget-body">
                 <div class="row">
-                    <div class="col-md-6 form-group">
+                    <div class="col-md-3 form-group">
                         @Html.EnumDropDownListFor(m => m.period, "Period", new { @class = "form-control", @id = "ddlLine" })
+                    </div>
+                    <div class="col-md-3 form-group">
+                        <input type="text" class="form-control" id="tbLineValue" name="StandardValue" placeholder="Standard Value" />
                     </div>
                 </div>
                 <div class="row" id="divDateLine" style="display : none">
@@ -41,6 +44,7 @@
         model.From = dateFormat($('#lineChartModel_From').val());
         model.To = dateFormat($('#lineChartModel_To').val());
         model.Ids = [];
+        model.StandardValue = $('#tbLineValue').val();
         $('input[name=lineIds]:checked').each(function () {
             model.Ids.push($(this).attr('value'));
         });
@@ -52,27 +56,39 @@
             dataType: "json",
             traditional: true,
             success: function (data) {
+                var plotValue = $('#tbLineValue').val() == 0 ? null : $('#tbLineValue').val();
                 var arr = [];
                 var v = [];
+                var popup = "";
                 var len = data.Result.length;
                 for (var i = 0; i < len; i++) {
                     v = [];
                     for (var j = 0; j < data.Result[i].things.length; j++)
+                    {
+                        if (plotValue != null) {
+                            if (data.Result[i].things[j].Y > plotValue)
+                                popup += data.Result[i].Name + " exceeded limit at " + data.Details.Dates[i] + "<br />";
+                        }
                         v[j] = data.Result[i].things[j].Y;
+                    }
+                        
                     arr.push({
                         data: v,
                         name: data.Result[i].Name
                     });
                 }
-                DreawChart(arr,data.Details);
+                DrawChart(arr, data.Details, plotValue);
+                if (popup != "") {
+                    messageFailure(popup);
+                }
             },
-            error: function (data,dates) {
-                alert("sam");
+            error: function (data, dates) {
+                alert("Failed");
             }
         });
     }
 
-    function DreawChart(data,info) {
+    function DrawChart(data, info, plotValue) {
         
         Highcharts.chart('lineChart', {
             chart: {
@@ -90,7 +106,13 @@
             yAxis: {
                 title: {
                     text: 'Consumption'
-                }
+                },
+                plotLines: [{
+                    value: plotValue,
+                    color: 'red',
+                    dashStyle: 'shortdash',
+                    width: 2,
+                }]
             },
             plotOptions: {
                 line: {

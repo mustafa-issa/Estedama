@@ -18,5 +18,7 @@ namespace ChartsMix.Models
         public BarPeriod period { get; set; }
         public DateTime From { get; set; }
         public DateTime To { get; set; }
+        public int[] Ids { get; set; }
+        public double StandardValue { get; set; }
     }
 }

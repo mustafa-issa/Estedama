@@ -209,6 +209,42 @@
             });
         })
 
+        $('#dialog_simple').dialog({
+            autoOpen: false,
+            width: 600,
+            resizable: false,
+            modal: true,
+            buttons: [{
+                html: "<i class='fa fa-times'></i>&nbsp; Close",
+                "class": "btn btn-default",
+                click: function () {
+                    $(this).dialog("close");
+                }
+            }]
+        });
+
+        function messageFailure(message)
+        {
+            $.bigBox({
+                title: "Failed",
+                content: message,
+                color: "#C46A69",
+                icon: "fa fa-warning shake animated",
+                
+            });
+
+        }
+
+        function messageSuccess(message) {
+            $.smallBox({
+                title: "Success!",
+                content: message,
+                color: "#739E73",
+                timeout: 6000,
+                icon: "fa fa-check"
+            });
+        }
+
     </script>
 }
 

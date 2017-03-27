@@ -65,6 +65,23 @@ namespace ChartsMix.Controllers
             }
         }
 
+        public async Task<ActionResult> GetBarChart(BarChartModel model)
+        {
+            try
+            {
+                db = new ChartsDatabaseManager();
+                var response = new LineChartDataModel();
+                var details = new ChartDetails();
+                response.Result = await db.GetLineChartMeters(details, model.From, model.To, model.period, model.Ids);
+                response.Details = details;
+                return Json(response, JsonRequestBehavior.AllowGet);
+            }
+            catch (Exception ex)
+            {
+                return Json(ex, JsonRequestBehavior.AllowGet);
+            }
+        }
+
         public async Task<ActionResult> GetGroupChart(GroupModel model)
         {
             try

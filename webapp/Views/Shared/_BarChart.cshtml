@@ -5,32 +5,35 @@
 <div>
     @using (Html.BeginForm("Index", "Home"))
     {
-        <div class="jarviswidget-editbox">
-            <div class="widget-body">
-                <div class="row">
-                    <div class="col-md-3 form-group">
-                        @Html.EnumDropDownListFor(m => m.period, "Period", new { @class = "form-control", @id = "ddlBar" })
-                    </div>
+    <div class="jarviswidget-editbox">
+        <div class="widget-body">
+            <div class="row">
+                <div class="col-md-3 form-group">
+                    @Html.EnumDropDownListFor(m => m.period, "Period", new { @class = "form-control", @id = "ddlBar" })
                 </div>
-
-                <div class="row" id="divDateBar" style="display : none">
-                    <div class="col-md-3 form-group">
-                        @Html.EditorFor(m => m.From)
-                    </div>
-                    <div class="col-md-3 form-group">
-                        @Html.EditorFor(m => m.To)
-                    </div>
-                </div>
-
-                <div class="tree smart-form">
-                    <ul>
-                        @Html.Raw(Helpers.FormTreeView(Model.TreeRoot, "bar"))
-                    </ul>
+                <div class="col-md-3 form-group">
+                    <input type="text" class="form-control" id="tbBarValue" name="StandardValue" placeholder="Standard Value" />
                 </div>
             </div>
-            <input type="button" class="btn btn-default" value="Show Bar Chart" id="getChartLine" onclick="GetBarChart()" />
-            <!-- This area used as dropdown edit box -->
+
+            <div class="row" id="divDateBar" style="display : none">
+                <div class="col-md-3 form-group">
+                    @Html.EditorFor(m => m.From)
+                </div>
+                <div class="col-md-3 form-group">
+                    @Html.EditorFor(m => m.To)
+                </div>
+            </div>
+
+            <div class="tree smart-form">
+                <ul>
+                    @Html.Raw(Helpers.FormTreeView(Model.TreeRoot, "bar"))
+                </ul>
+            </div>
         </div>
+        <input type="button" class="btn btn-default" value="Show Bar Chart" id="getChartLine" onclick="GetBarChart()" />
+        <!-- This area used as dropdown edit box -->
+    </div>
     }
     <div class="widget-body">
         <div id="barChart"></div>
@@ -38,44 +41,56 @@
 </div>
 
 <script>
-
     function GetBarChart() {
         var model = {};
         model.Period = $('#ddlBar').val();
         model.From = dateFormat($('#barChartModel_From').val());
         model.To = dateFormat($('#barChartModel_To').val());
         model.Ids = [];
+        model.StandardValue = $('#tbBarValue').val();
         $('input[name=barIds]:checked').each(function () {
             model.Ids.push($(this).attr('value'));
         });
         $.ajax({
             type: "GET",
             contentType: "application/json; charset=utf-8",
-            url: '@Url.Action("GetLineChart", "Home")',
+            url: '@Url.Action("GetBarChart", "Home")',
             data: model,
             dataType: "json",
             traditional: true,
             success: function (data) {
+                var plotValue = $('#tbBarValue').val() == 0 ? null : $('#tbBarValue').val();
                 var arr = [];
                 var v = [];
+                var popup = "";
                 var len = data.Result.length;
                 for (var i = 0; i < len; i++) {
                     v = [];
-                    for (var j = 0; j < data.Result[i].things.length; j++)
+                    for (var j = 0; j < data.Result[i].things.length; j++) {
+                        if (plotValue != null) {
+                            if (data.Result[i].things[j].Y > plotValue)
+                                popup += data.Result[i].Name + " exceeded limit at " + data.Details.Dates[i] + "<br />";
+                        }
                         v[j] = data.Result[i].things[j].Y;
+                    }
                     arr.push({
                         data: v,
                         name: data.Result[i].Name
                     });
                 }
-                DreawBarChart(arr,data.Details);
+                DrawBarChart(arr, data.Details, plotValue);
+                if (popup != "")
+                {
+                    messageFailure(popup);
+                }
+                    
             },
-            error: function (data,dates) {
-                alert("sam");
+            error: function (data, dates) {
+                alert("Failed");
             }
         });
     }
-    function DreawBarChart(data,info) {
+    function DrawBarChart(data, info, plotValue) {
 
         Highcharts.chart('barChart', {
             chart: {
@@ -93,7 +108,13 @@
             yAxis: {
                 title: {
                     text: 'Consumption'
-                }
+                },
+                plotLines: [{
+                    value: plotValue,
+                    color: 'red',
+                    dashStyle: 'shortdash',
+                    width: 2,
+                }]
             },
             plotOptions: {
                 line: {
