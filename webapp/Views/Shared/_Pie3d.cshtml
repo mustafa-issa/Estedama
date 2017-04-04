@@ -10,6 +10,11 @@
                     <div class="col-md-6 form-group">
                         @Html.EnumDropDownListFor(m => m.period, "Period", new { @class = "form-control", @id = "ddlPie" })
                     </div>
+                    <div class="col-md-6 form-group">
+                        <section>
+                            <label style="float : right;" class="inline-block checkbox"><input type="checkbox" checked="checked" name="defaultColors" id="chkPie"><i></i>Default Colors</label>
+                        </section>
+                    </div>
                 </div>
                 <div class="row" id="divDatePie" style="display : none">
                     <div class="col-md-6 form-group">
@@ -18,7 +23,9 @@
                     <div class="col-md-6 form-group">
                         @Html.EditorFor(m => m.To)
                     </div>
+                    
                 </div>
+                
                 <div class="tree smart-form">
                     <ul>
                         @Html.Raw(Helpers.FormTreeView(Model.TreeRoot, "pie"))
@@ -31,6 +38,7 @@
     <div class="widget-body">
 
             <div id="pieChart"></div></div>
+    <input id='color' type='color' style='display: none;' value='#ff0000' />
 
 </div>
 
@@ -43,9 +51,21 @@
         model.From = dateFormat($('#PieModel_From').val());
         model.To = dateFormat($('#PieModel_To').val());
         model.Ids = [];
-        $('input[name=pieIds]:checked').each(function () {
-            model.Ids.push($(this).attr('value'));
-        });
+        var colors = [];
+        if ($('#chkPie').is(":checked")) {
+            $('input[name=pieIds]:checked').each(function () {
+                model.Ids.push($(this).attr('value'));
+            });
+            colors = ['#7cb5ec', '#434348', '#90ed7d', '#f7a35c', '#8085e9', '#f15c80', '#e4d354', '#2b908f', '#f45b5b', '#91e8e1'];
+        }
+        else
+        {
+            $('input[name=pieIds]:checked').each(function () {
+                model.Ids.push($(this).attr('value'));
+                colors.push($(this).attr('color'));
+            });
+        }
+        
         $.ajax({
             type: "GET",
             contentType: "application/json; charset=utf-8",
@@ -62,7 +82,7 @@
                         name: data[i].Name
                     });
                 }
-                DrawPieChart(arr);
+                DrawPieChart(arr, colors);
             },
             error: function (err) {
                 alert(err);
@@ -70,15 +90,19 @@
         });
     }
 
-    function DrawPieChart(arr) {
+    function DrawPieChart(arr, colors) {
 
         Highcharts.chart('pieChart', {
+            credits: {
+                text: "ChartsMix.com",
+                href: "http://www.chartsmix.com"
+            },
+            colors: colors,
             chart: {
                 type: 'pie',
                 options3d: {
                     enabled: true,
-                    alpha: 45,
-                    beta: 0
+                    alpha: 45
                 }
             },
             title: {
@@ -89,13 +113,8 @@
             },
             plotOptions: {
                 pie: {
-                    allowPointSelect: true,
-                    cursor: 'pointer',
-                    depth: 35,
-                    dataLabels: {
-                        enabled: true,
-                        format: '{point.name}'
-                    }
+                    innerSize: 100,
+                    depth: 45
                 }
             },
             series: [{
@@ -105,6 +124,4 @@
             }]
         });
     }
-    
-
 </script>

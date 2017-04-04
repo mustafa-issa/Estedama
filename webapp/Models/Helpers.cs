@@ -17,7 +17,7 @@ namespace ChartsMix.Models
                     result += "<li style='display:none'>";
                 result += "<span><i class='fa fa-lg fa-plus-circle'></i> ";
                 result += node.Name;
-                result += "</span><ul>";
+                result += "</span><ul> ";
                 foreach (var child in node.Children)
                 {
                     result += FormTreeView(child,name);
@@ -27,7 +27,7 @@ namespace ChartsMix.Models
             else
             {
                 result += "<li style='display:none'>";
-                result += "<span><label class='checkbox inline-block'><input type='checkbox' value=" + node.EntityId + " name=" + name + "Ids><i></i> ";
+                result += "<span><label class='checkbox inline-block'><input type='checkbox' color='0' value=" + node.EntityId + " name=" + name + "Ids><i></i> ";
                 result += node.Name;
                 result += "</label></span>";
                 result += "</li>";
