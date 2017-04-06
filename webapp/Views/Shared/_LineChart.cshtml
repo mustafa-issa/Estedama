@@ -32,9 +32,22 @@
         </div>
     }
     <div class="widget-body">
+        <div id="lineChartSummary" class="hidden col-md-6">
+            <table class="table">
+                <tr>
+                    <td>Maximum Consumption</td>
+                    <td>Minimum Consumption</td>
+                    <td>Average Consumption</td>
+                </tr>
+                <tr>
+                    <td><span id="lineChartMax"></span></td>
+                    <td><span id="lineChartMin"></span></td>
+                    <td><span id="lineChartAvg"></span></td>
+                </tr>
+            </table>
+        </div>
         <div id="lineChart"></div>
     </div>
-
 </div>
 <script>
 
@@ -71,13 +84,13 @@
                         }
                         v[j] = data.Result[i].things[j].Y;
                     }
-                        
+
                     arr.push({
                         data: v,
                         name: data.Result[i].Name
                     });
                 }
-                DrawChart(arr, data.Details, plotValue);
+                DrawChart(arr, data.Details, plotValue, data.MaxConsumption, data.MinConsumption, data.AverageCunsumption);
                 if (popup != "") {
                     messageFailure(popup);
                 }
@@ -88,8 +101,11 @@
         });
     }
 
-    function DrawChart(data, info, plotValue) {
-        
+    function DrawChart(data, info, plotValue, max, min, avg) {
+        $('#lineChartSummary').removeClass('hidden');
+        $('#lineChartMax').text(Math.round(max));
+        $('#lineChartMin').text(Math.round(min));
+        $('#lineChartAvg').text(Math.round(avg));
         Highcharts.chart('lineChart', {
             chart: {
                 type: 'line'

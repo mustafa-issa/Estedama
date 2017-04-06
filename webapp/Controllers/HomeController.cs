@@ -57,12 +57,32 @@ namespace ChartsMix.Controllers
                 var details = new ChartDetails();
                 response.Result = await db.GetLineChartMeters(details, model.From, model.To, model.period, model.Ids);
                 response.Details = details;
+                FillSummary(response);
                 return Json(response, JsonRequestBehavior.AllowGet);
             }
             catch(Exception ex)
             {
                 return Json(ex, JsonRequestBehavior.AllowGet);
             }
+        }
+
+        private void FillSummary(LineChartDataModel response)
+        {
+            response.MaxConsumption = double.MinValue;
+            response.MinConsumption = double.MaxValue;
+            var counter = 0;
+            var sum = 0.0;
+            foreach (var v in response.Result)
+            {
+                foreach(var c in v.things)
+                {
+                    response.MaxConsumption = Math.Max(response.MaxConsumption, c.Y.Value);
+                    response.MinConsumption = Math.Min(response.MinConsumption, c.Y.Value);
+                    sum += c.Y.Value;
+                    counter++;
+                }
+            }
+            response.AverageCunsumption = (sum / counter);
         }
 
         public async Task<ActionResult> GetBarChart(BarChartModel model)
@@ -74,6 +94,7 @@ namespace ChartsMix.Controllers
                 var details = new ChartDetails();
                 response.Result = await db.GetLineChartMeters(details, model.From, model.To, model.period, model.Ids);
                 response.Details = details;
+                FillSummary(response);
                 return Json(response, JsonRequestBehavior.AllowGet);
             }
             catch (Exception ex)

@@ -23,9 +23,9 @@
                     <div class="col-md-6 form-group">
                         @Html.EditorFor(m => m.To)
                     </div>
-                    
+
                 </div>
-                
+
                 <div class="tree smart-form">
                     <ul>
                         @Html.Raw(Helpers.FormTreeView(Model.TreeRoot, "pie"))
@@ -36,8 +36,22 @@
         </div>
     }
     <div class="widget-body">
-
-            <div id="pieChart"></div></div>
+        <div id="pie3DChartSummary" class="hidden col-md-6">
+            <table class="table">
+                <tr>
+                    <td>Maximum Consumption</td>
+                    <td>Minimum Consumption</td>
+                    <td>Average Consumption</td>
+                </tr>
+                <tr>
+                    <td><span id="pie3DChartMax"></span></td>
+                    <td><span id="pie3DChartMin"></span></td>
+                    <td><span id="pie3DChartAvg"></span></td>
+                </tr>
+            </table>
+        </div>
+        <div id="pieChart"></div>
+    </div>
     <input id='color' type='color' style='display: none;' value='#ff0000' />
 
 </div>
@@ -65,7 +79,7 @@
                 colors.push($(this).attr('color'));
             });
         }
-        
+
         $.ajax({
             type: "GET",
             contentType: "application/json; charset=utf-8",
@@ -75,14 +89,14 @@
             traditional: true,
             success: function (data) {
                 var arr = [];
-                var len = data.length;
+                var len = data.Data.length;
                 for (var i = 0; i < len; i++) {
                     arr.push({
-                        y: data[i].Y,
-                        name: data[i].Name
+                        y: data.Data[i].Y,
+                        name: data.Data[i].Name
                     });
                 }
-                DrawPieChart(arr, colors);
+                DrawPieChart(arr, colors,data.MaxConsumption,data.MinConsumption,data.AverageConsumption);
             },
             error: function (err) {
                 alert(err);
@@ -90,8 +104,11 @@
         });
     }
 
-    function DrawPieChart(arr, colors) {
-
+    function DrawPieChart(arr, colors, max, min, avg) {
+        $('#pie3DChartSummary').removeClass('hidden');
+        $('#pie3DChartMax').text(Math.round(max));
+        $('#pie3DChartMin').text(Math.round(min));
+        $('#pie3DChartAvg').text(Math.round(avg));
         Highcharts.chart('pieChart', {
             credits: {
                 text: "ChartsMix.com",

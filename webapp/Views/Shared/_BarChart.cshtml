@@ -36,6 +36,20 @@
     </div>
     }
     <div class="widget-body">
+        <div id="barChartSummary" class="hidden col-md-6">
+            <table class="table">
+                <tr>
+                    <td>Maximum Consumption</td>
+                    <td>Minimum Consumption</td>
+                    <td>Average Consumption</td>
+                </tr>
+                <tr>
+                    <td><span id="barChartMax"></span></td>
+                    <td><span id="barChartMin"></span></td>
+                    <td><span id="barChartAvg"></span></td>
+                </tr>
+            </table>
+        </div>
         <div id="barChart"></div>
     </div>
 </div>
@@ -78,7 +92,7 @@
                         name: data.Result[i].Name
                     });
                 }
-                DrawBarChart(arr, data.Details, plotValue);
+                DrawBarChart(arr, data.Details, plotValue, data.MaxConsumption, data.MinConsumption, data.AverageCunsumption);
                 if (popup != "")
                 {
                     messageFailure(popup);
@@ -90,8 +104,11 @@
             }
         });
     }
-    function DrawBarChart(data, info, plotValue) {
-
+    function DrawBarChart(data, info, plotValue,max,min,avg) {
+        $('#barChartSummary').removeClass('hidden');
+        $('#barChartMax').text(Math.round(max));
+        $('#barChartMin').text(Math.round(min));
+        $('#barChartAvg').text(Math.round(avg));
         Highcharts.chart('barChart', {
             chart: {
                 type: 'column'

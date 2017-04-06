@@ -20,8 +20,10 @@ namespace ChartsMix.Models
                 return (T)Convert.ChangeType(readerValue, typeof(T));
         }
 
-        public async Task<List<PieSeriesData>> GetPieChartMeters(int[] ids, DateTime fromDate, DateTime toDate, PiePeriod period)
+        public async Task<BaseChartModel<List<PieSeriesData>>> GetPieChartMeters(int[] ids, DateTime fromDate, DateTime toDate, PiePeriod period)
         {
+            var returnVal = new BaseChartModel<List<PieSeriesData>>();
+            var counter = 0;
             var result = new List<PieSeriesData>();
             foreach(var meterId in ids)
             {
@@ -29,8 +31,10 @@ namespace ChartsMix.Models
                 {
                     using (SqlConnection connection = new SqlConnection(_connectionString))
                     {
-                        var command = new SqlCommand();
-                        command.Connection = connection;
+                        var command = new SqlCommand()
+                        {
+                            Connection = connection
+                        };
                         command.Parameters.Add(new SqlParameter("@Id", meterId));
                         switch (period)
                         {
@@ -77,6 +81,10 @@ namespace ChartsMix.Models
                                     Name = GetValue<string>(reader["Name"], string.Empty),
                                     Y = GetValue<double>(reader["FloatVALUE"], 0.0)
                                 });
+                                counter++;
+                                returnVal.MaxConsumption = Math.Max(returnVal.MaxConsumption, GetValue<double>(reader["FloatVALUE"], 0.0));
+                                returnVal.MinConsumption = Math.Min(returnVal.MinConsumption, GetValue<double>(reader["FloatVALUE"], 0.0));
+                                returnVal.AverageConsumption += GetValue<double>(reader["FloatVALUE"], 0.0);
                             }
                         }
                     }
@@ -86,7 +94,9 @@ namespace ChartsMix.Models
                     throw ex;
                 }
             }
-            return result;
+            returnVal.AverageConsumption = returnVal.AverageConsumption / counter;
+            returnVal.Data = result;
+            return returnVal;
         }
 
         public async Task<List<Meter>> GetAllMeters()
@@ -357,7 +367,7 @@ namespace ChartsMix.Models
                         {
                             dataResult.Add(new LineSeriesData
                             {
-                                Y = queryResult[i].value - queryResult[i + 1].value
+                                Y = Math.Max(0, queryResult[i].value - queryResult[i + 1].value)
                             });
                         }
                         dataResult.Reverse();
