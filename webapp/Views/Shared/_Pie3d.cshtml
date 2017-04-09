@@ -36,20 +36,7 @@
         </div>
     }
     <div class="widget-body">
-        <div id="pie3DChartSummary" class="hidden col-md-6">
-            <table class="table">
-                <tr>
-                    <td>Maximum Consumption</td>
-                    <td>Minimum Consumption</td>
-                    <td>Average Consumption</td>
-                </tr>
-                <tr>
-                    <td><span id="pie3DChartMax"></span></td>
-                    <td><span id="pie3DChartMin"></span></td>
-                    <td><span id="pie3DChartAvg"></span></td>
-                </tr>
-            </table>
-        </div>
+        
         <div id="pieChart"></div>
     </div>
     <input id='color' type='color' style='display: none;' value='#ff0000' />
@@ -103,14 +90,18 @@
             }
         });
     }
-
+    var max, min, avg;
     function DrawPieChart(arr, colors, max, min, avg) {
-        $('#pie3DChartSummary').removeClass('hidden');
-        $('#pie3DChartMax').text(Math.round(max));
-        $('#pie3DChartMin').text(Math.round(min));
-        $('#pie3DChartAvg').text(Math.round(avg));
+        max = max;
+        min = min;
+        avg = avg;
         Highcharts.chart('pieChart', {
+            exporting: {
+                fallbackToExportServer: false,
+                allowHTML: true
+            },
             credits: {
+                enabled : false,
                 text: "ChartsMix.com",
                 href: "http://www.chartsmix.com"
             },
@@ -126,19 +117,27 @@
                 text: 'Pie Chart Breakdown'
             },
             tooltip: {
-                pointFormat: '{series.name}: <b>{point.percentage:.1f}%</b>'
+                pointFormat: '{series.name}: <b>{point.percentage:.1f}% = {point.y}</b>'
+                
             },
             plotOptions: {
+                
                 pie: {
-                    innerSize: 100,
+                   // innerSize: 100,
                     depth: 45
                 }
             },
+            
             series: [{
                 name: 'Meters',
                 type: 'pie',
                 data: arr
             }]
+        }, function (chart) {
+            chart.renderer.html('<style>table {width : 100%; border-collapse : collapse;} td, th {font-family : "Lucida Grande", "Lucida Sans Unicode", Arial, Helvetica, sans-serif; white-space : nowrap; font-size : 12px; padding: 8px 10px;border-top : 1px solid #ddd;}</style><table class="table table-hover"> <tr><th>Maximum</th><th>Minimum</th><th>Average</th></tr><tr><td>' + max + '</td><td>' + min + '</td><td>' + avg + '</td></tr></table>'
+                , 10, 50, 10, 10)
+                .add();
+
         });
     }
 </script>

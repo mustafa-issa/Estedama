@@ -89,7 +89,18 @@
                     }
                     arr.push({
                         data: v,
-                        name: data.Result[i].Name
+                        name: data.Result[i].Name,
+                        dataLabels: {
+                            formatter: function () {
+                                return this.y > 1000 ? parseInt(this.y) : this.y;
+                            },
+                            enabled: true,
+                            color: '#fff',
+                            align: 'right',
+                            x: 0,
+                            y: 10,
+                            rotation: -90,
+                        }
                     });
                 }
                 DrawBarChart(arr, data.Details, plotValue, data.MaxConsumption, data.MinConsumption, data.AverageCunsumption);
