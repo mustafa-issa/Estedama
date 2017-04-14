@@ -56,23 +56,23 @@
             </article>
         </div>
 
-        @*<div class="row">
+        <div class="row">
 
             <!-- NEW WIDGET START -->
             <article class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
-                <div class="jarviswidget" id="barChartWidget">
+                <div class="jarviswidget" id="comparisonChartWidget">
                     <header>
                         <span class="widget-icon"> <i class="fa fa-bar-chart-o"></i> </span>
                         <h2>Compare Chart</h2>
                     </header>
-                    @Html.Partial("_ComparePeriodBarChart", Model.barChartModel, new ViewDataDictionary { TemplateInfo = new TemplateInfo { HtmlFieldPrefix = "periodChartModel" } })
+                    @Html.Partial("_ComparePeriodBarChart", Model.comparisonChartModel, new ViewDataDictionary { TemplateInfo = new TemplateInfo { HtmlFieldPrefix = "comparisonChartModel" } })
                 </div>
                 <!-- end widget -->
 
             </article>
             <!-- WIDGET END -->
 
-        </div>*@
+        </div>
 
         <div class="row">
 

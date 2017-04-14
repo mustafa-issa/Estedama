@@ -5,4 +5,3 @@ webapp/Web.config
 webapp/obj/
 packages/
 .vs/
-webapp/ChartsMix.csproj.user

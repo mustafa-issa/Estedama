@@ -1,6 +1,6 @@
 ﻿@using ChartsMix.Models
 @using Highsoft.Web.Mvc.Charts
-@model BarChartModel
+@model ComparisonChartModel
 
 <div>
     @using (Html.BeginForm("Index", "Home"))
@@ -28,20 +28,20 @@
                     </ul>
                 </div>
             </div>
-            <input type="button" class="btn btn-default" value="Show Bar Chart" id="getChartLine" onclick="GetBarChart()" />
+            <input type="button" class="btn btn-default" value="Show Comparison Chart" id="getChartLine" onclick="GetComperisonChart()" />
         </div>
     }
     <div class="widget-body">
-        <div id="barChart"></div>
+        <div id="comparisonChart"></div>
     </div>
 </div>
 
 <script>
-    function GetBarChart() {
+    function GetComperisonChart() {
         var model = {};
         model.Period = $('#ddlPeriodBar').val();
-        model.From = dateFormat($('#periodChartModel_From').val());
-        model.To = dateFormat($('#periodChartModel_To').val());
+        model.From = dateFormat($('#comparisonChartModel_From').val());
+        model.To = dateFormat($('#comparisonChartModel_To').val());
         model.Ids = [];
         $('input[name=periodIds]:checked').each(function () {
             model.Ids.push($(this).attr('value'));
@@ -49,7 +49,7 @@
         $.ajax({
             type: "GET",
             contentType: "application/json; charset=utf-8",
-            url: '@Url.Action("GetPeriodBarChart", "Home")',
+            url: '@Url.Action("GetComperisonChart", "Home")',
             data: model,
             dataType: "json",
             traditional: true,
@@ -73,7 +73,7 @@
                         name: data.Result[i].Name
                     });
                 }
-                DrawBarChart(arr, data.Details, plotValue);
+                DrawComparisonChart(arr, data.Details, plotValue);
                 if (popup != "")
                 {
                     messageFailure(popup);
@@ -85,14 +85,13 @@
             }
         });
     }
-    function DrawBarChart(data, info, plotValue) {
-
-        Highcharts.chart('barChart', {
+    function DrawComparisonChart(data, info, plotValue) {
+        Highcharts.chart('comparisonChart', {
             chart: {
                 type: 'column'
             },
             title: {
-                text: info.Title + ' Of Consumption'
+                text: info.Title
             },
             subtitle: {
                 text: info.SubTitle
@@ -100,9 +99,18 @@
             xAxis: {
                 categories: info.Dates
             },
+
             yAxis: {
+                min: 0,
                 title: {
                     text: 'Consumption'
+                },
+                stackLabels: {
+                    enabled: true,
+                    style: {
+                        fontWeight: 'bold',
+                        color: (Highcharts.theme && Highcharts.theme.textColor) || 'gray'
+                    }
                 },
                 plotLines: [{
                     value: plotValue,
@@ -111,8 +119,20 @@
                     width: 2,
                 }]
             },
+            legend: {
+                align: 'right',
+                x: -30,
+                verticalAlign: 'top',
+                y: 25,
+                floating: true,
+                backgroundColor: (Highcharts.theme && Highcharts.theme.background2) || 'white',
+                borderColor: '#CCC',
+                borderWidth: 1,
+                shadow: false
+            },
             plotOptions: {
-                line: {
+                column: {
+                    stacking: 'normal',
                     dataLabels: {
                         enabled: true
                     },

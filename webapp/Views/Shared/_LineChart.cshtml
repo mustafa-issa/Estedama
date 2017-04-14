@@ -7,11 +7,16 @@
         <div class="jarviswidget-editbox">
             <div class="widget-body">
                 <div class="row">
-                    <div class="col-md-3 form-group">
+                    <div class="col-md-4 form-group">
                         @Html.EnumDropDownListFor(m => m.period, "Period", new { @class = "form-control", @id = "ddlLine" })
                     </div>
-                    <div class="col-md-3 form-group">
+                    <div class="col-md-4 form-group">
                         <input type="text" class="form-control" id="tbLineValue" name="StandardValue" placeholder="Standard Value" />
+                    </div>
+                    <div class="col-md-4 form-group">
+                        <section>
+                            <label style="float : right;" class="inline-block checkbox"><input type="checkbox" checked="checked" name="defaultColors" id="chkLine"><i></i>Default Colors</label>
+                        </section>
                     </div>
                 </div>
                 <div class="row" id="divDateLine" style="display : none">
@@ -58,9 +63,19 @@
         model.To = dateFormat($('#lineChartModel_To').val());
         model.Ids = [];
         model.StandardValue = $('#tbLineValue').val();
-        $('input[name=lineIds]:checked').each(function () {
-            model.Ids.push($(this).attr('value'));
-        });
+        var colors = [];
+        if ($('#chkLine').is(":checked")) {
+            $('input[name=lineIds]:checked').each(function () {
+                model.Ids.push($(this).attr('value'));
+            });
+            colors = ['#7cb5ec', '#434348', '#90ed7d', '#f7a35c', '#8085e9', '#f15c80', '#e4d354', '#2b908f', '#f45b5b', '#91e8e1'];
+        }
+        else {
+            $('input[name=lineIds]:checked').each(function () {
+                model.Ids.push($(this).attr('value'));
+                colors.push($(this).attr('color'));
+            });
+        }
         $.ajax({
             type: "GET",
             contentType: "application/json; charset=utf-8",
@@ -90,7 +105,7 @@
                         name: data.Result[i].Name
                     });
                 }
-                DrawChart(arr, data.Details, plotValue, data.MaxConsumption, data.MinConsumption, data.AverageCunsumption);
+                DrawChart(arr, colors, data.Details, plotValue, data.MaxConsumption, data.MinConsumption, data.AverageCunsumption);
                 if (popup != "") {
                     messageFailure(popup);
                 }
@@ -101,12 +116,26 @@
         });
     }
 
-    function DrawChart(data, info, plotValue, max, min, avg) {
+    function DrawChart(data, colors, info, plotValue, max, min, avg) {
+
         $('#lineChartSummary').removeClass('hidden');
         $('#lineChartMax').text(Math.round(max));
         $('#lineChartMin').text(Math.round(min));
         $('#lineChartAvg').text(Math.round(avg));
+        max = max;
+        min = min;
+        avg = avg;
         Highcharts.chart('lineChart', {
+            exporting: {
+                fallbackToExportServer: false,
+                allowHTML: true
+            },
+            credits: {
+                enabled: false,
+                text: "ChartsMix.com",
+                href: "http://www.chartsmix.com"
+            },
+            colors: colors,
             chart: {
                 type: 'line'
             },

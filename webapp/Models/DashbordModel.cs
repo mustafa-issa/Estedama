@@ -9,10 +9,12 @@ namespace ChartsMix.Models
             barChartModel = new BarChartModel();
             lineChartModel = new LineChartModel();
             pieGroupChartModel = new PieGroupModel();
+            comparisonChartModel = new ComparisonChartModel();
         }
         public Pie3DModel PieModel { get; set; }
         public BarChartModel barChartModel { get; set; }
         public LineChartModel lineChartModel { get; set; }
         public PieGroupModel pieGroupChartModel { get; set; }
+        public ComparisonChartModel comparisonChartModel { get; set; }
     }
 }

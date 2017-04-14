@@ -45,7 +45,7 @@
             checkbox.attr('color', $('#color').val());
         });
         $('[name=pieIds]').change(function () {
-            if (! $('#chkPie').is(":checked")) {
+            if (!$('#chkPie').is(":checked")) {
                 if ($(this).is(":checked")) {
                     checkbox = $(this);
                     $('#color').click();
@@ -56,6 +56,22 @@
         });
         $('#chkPie').change(function () {
             $('input[name=pieIds]:checked').each(function () {
+                $(this).removeAttr('checked');
+            });
+        });
+
+        $('[name=lineIds]').change(function () {
+            if (!$('#chkLine').is(":checked")) {
+                if ($(this).is(":checked")) {
+                    checkbox = $(this);
+                    $('#color').click();
+                }
+                else
+                    checkbox.siblings().css('background-color', '');
+            }
+        });
+        $('#lineIds').change(function () {
+            $('input[name=lineIds]:checked').each(function () {
                 $(this).removeAttr('checked');
             });
         });

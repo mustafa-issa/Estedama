@@ -107,6 +107,10 @@
             },
             colors: colors,
             chart: {
+                spacingBottom: 50,
+                spacingTop: 0,
+                spacingLeft: 10,
+                spacingRight: 10,
                 type: 'pie',
                 options3d: {
                     enabled: true,
@@ -123,8 +127,13 @@
             plotOptions: {
                 
                 pie: {
-                   // innerSize: 100,
-                    depth: 45
+                    allowPointSelect: true,
+                    cursor: 'pointer',
+                    depth: 35,
+                    dataLabels: {
+                        enabled: true,
+                        format: '{point.name}'
+                    }
                 }
             },
             
@@ -134,10 +143,11 @@
                 data: arr
             }]
         }, function (chart) {
-            chart.renderer.html('<style>table {width : 100%; border-collapse : collapse;} td, th {font-family : "Lucida Grande", "Lucida Sans Unicode", Arial, Helvetica, sans-serif; white-space : nowrap; font-size : 12px; padding: 8px 10px;border-top : 1px solid #ddd;}</style><table class="table table-hover"> <tr><th>Maximum</th><th>Minimum</th><th>Average</th></tr><tr><td>' + max + '</td><td>' + min + '</td><td>' + avg + '</td></tr></table>'
-                , 10, 50, 10, 10)
-                .add();
 
+            chart.renderer.html('<style>table {width : 100%; border-collapse : collapse;} td, th {font-family : "Lucida Grande", "Lucida Sans Unicode", Arial, Helvetica, sans-serif; white-space : nowrap; font-size : 12px; padding: 8px 10px;border-top : 1px solid #ddd;}</style><table id="pieTable" class="table table-hover"> <tr><th>Maximum</th><th>Minimum</th><th>Average</th></tr><tr><td>' + max + '</td><td>' + min + '</td><td>' + avg + '</td></tr></table>'
+                , 10, $('#pieChart').height() - 50)
+                .add();
+            $('#pieTable').parent().css({ "width": "100%" });
         });
     }
 </script>

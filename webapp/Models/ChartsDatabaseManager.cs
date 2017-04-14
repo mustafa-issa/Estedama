@@ -391,6 +391,123 @@ namespace ChartsMix.Models
             }
         }
 
+        public async Task<List<CustomLineSeries>> GetComparisonChart(ChartDetails details, DateTime periodOne, DateTime periodTwo, PiePeriod period, int[] ids)
+        {
+             List<CustomLineSeries> result = new List<CustomLineSeries>();
+
+            var query = "";
+            DateTime from = DateTime.Now, from2 = DateTime.Now, to = DateTime.Now, to2 = DateTime.Now;
+            switch (period)
+            {
+                case PiePeriod.Day:
+                    from = CleanDateTimeHours(periodOne).AddHours(-1);
+                    to = CleanDateTimeHours(periodOne).AddDays(1).AddMilliseconds(-1);
+                    from2 = CleanDateTimeHours(periodTwo).AddHours(-1);
+                    to2 = CleanDateTimeHours(periodTwo).AddDays(1).AddMilliseconds(-1);
+                    details.Dates.Add(from.ToShortDateString());
+                    details.Dates.Add(from2.ToShortDateString());
+                    details.Title = "Comparison based on days";
+                    details.SubTitle = string.Format("{0} - {1}", from.ToShortDateString(), from2.ToShortDateString());
+                    break;
+                case PiePeriod.Week:
+                    from = CleanDateTimeHours(periodOne).AddHours(-1);
+                    to = CleanDateTimeHours(periodOne).AddDays(1).AddMilliseconds(-1);
+                    from2 = CleanDateTimeHours(periodTwo).AddHours(-1);
+                    to2 = CleanDateTimeHours(periodTwo).AddDays(1).AddMilliseconds(-1);
+                    break;
+                case PiePeriod.Month:
+                    from = CleanDateTimeMonths(periodOne).AddHours(-1);
+                    to = CleanDateTimeMonths(periodOne).AddDays(1).AddMilliseconds(-1);
+                    from2 = CleanDateTimeMonths(periodTwo).AddHours(-1);
+                    to2 = CleanDateTimeMonths(periodTwo).AddDays(1).AddMilliseconds(-1);
+                    break;
+                case PiePeriod.Year:
+                    from = CleanDateTimeHours(periodOne).AddHours(-1);
+                    to = CleanDateTimeHours(periodOne).AddDays(1).AddMilliseconds(-1);
+                    from2 = CleanDateTimeHours(periodTwo).AddHours(-1);
+                    to2 = CleanDateTimeHours(periodTwo).AddDays(1).AddMilliseconds(-1);
+                    break;
+                case PiePeriod.Custom:
+                    from = CleanDateTimeHours(periodOne).AddHours(-1);
+                    to = CleanDateTimeHours(periodOne).AddDays(1).AddMilliseconds(-1);
+                    from2 = CleanDateTimeHours(periodTwo).AddHours(-1);
+                    to2 = CleanDateTimeHours(periodTwo).AddDays(1).AddMilliseconds(-1);
+                    break;
+                default:
+                    from = CleanDateTimeHours(periodOne).AddHours(-1);
+                    to = CleanDateTimeHours(periodOne).AddDays(1).AddMilliseconds(-1);
+                    from2 = CleanDateTimeHours(periodTwo).AddHours(-1);
+                    to2 = CleanDateTimeHours(periodTwo).AddDays(1).AddMilliseconds(-1);
+                    break;
+            }
+
+            query = @"SELECT Name , round(max(ltv.FloatVALUE) - min(ltv.FloatVALUE), 2)  as FloatVALUE
+	                            FROM tbLogTimeValues ltv
+	                            LEFT JOIN tbTrendLogRelation tlr  ON ltv.ParentID = tlr.EntityID 
+                                WHERE EntityId = @id AND DateTimeStamp BETWEEN @From AND @To group by Name";
+            int i = 0;
+            foreach(var id in ids)
+            {
+                var queryResult = new List<LineSeriesData>();
+                using (var connection = new SqlConnection(_connectionString))
+                {
+                    queryResult = new List<LineSeriesData>();
+                    var command = new SqlCommand();
+                    command.Connection = connection;
+                    command.CommandType = System.Data.CommandType.Text;
+                    command.CommandText = query;
+                    command.Parameters.Add(new SqlParameter("@Id", id));
+                    command.Parameters.Add(new SqlParameter("@From", from));
+                    command.Parameters.Add(new SqlParameter("@To", to));
+
+                    await connection.OpenAsync();
+                    using (var reader = await command.ExecuteReaderAsync())
+                    {
+                        while (await reader.ReadAsync())
+                        {
+                            queryResult.Add(new LineSeriesData
+                            {
+                                Name = GetValue<string>(reader["Name"], string.Empty),
+                                Y = GetValue<double>(reader["FloatVALUE"], 0.0),
+                            });
+                        }
+                    }
+                }
+                result.Add(new CustomLineSeries
+                {
+                    Name = queryResult.First().Name,
+                    things = queryResult
+                });
+
+                using (var connection = new SqlConnection(_connectionString))
+                {
+                    queryResult = new List<LineSeriesData>();
+                    var command = new SqlCommand();
+                    command.Connection = connection;
+                    command.CommandType = System.Data.CommandType.Text;
+                    command.CommandText = query;
+                    command.Parameters.Add(new SqlParameter("@Id", id));
+                    command.Parameters.Add(new SqlParameter("@From", from2));
+                    command.Parameters.Add(new SqlParameter("@To", to2));
+
+                    await connection.OpenAsync();
+                    using (var reader = await command.ExecuteReaderAsync())
+                    {
+                        while (await reader.ReadAsync())
+                        {
+                            result[i++].things.Add(new LineSeriesData
+                            {
+                                Name = GetValue<string>(reader["Name"], string.Empty),
+                                Y = GetValue<double>(reader["FloatVALUE"], 0.0),
+                            });
+                        }
+                    }
+                }
+            }
+
+            return result;
+        }
+
         // In Progress
         public async Task<List<CustomLineSeries>> GetLineChartMeters(ChartDetails details, DateTime fromDate, DateTime toDate, BarPeriod period, int[] ids)
         {
@@ -477,8 +594,27 @@ namespace ChartsMix.Models
 
         #region private Helpers
 
+        private DateTime CleanDateTimeMonths(DateTime dateTime)
+        {
+            dateTime = dateTime.AddDays(-dateTime.Day);
+            dateTime = dateTime.AddHours(-dateTime.Hour);
+            dateTime = dateTime.AddMinutes(-dateTime.Minute);
+            dateTime = dateTime.AddSeconds(-dateTime.Second);
+            dateTime = dateTime.AddMilliseconds(-dateTime.Millisecond);
+            return dateTime;
+        }
+
         private DateTime CleanDateTime(DateTime dateTime)
         {
+            dateTime = dateTime.AddMinutes(-dateTime.Minute);
+            dateTime = dateTime.AddSeconds(-dateTime.Second);
+            dateTime = dateTime.AddMilliseconds(-dateTime.Millisecond);
+            return dateTime;
+        }
+
+        private DateTime CleanDateTimeHours(DateTime dateTime)
+        {
+            dateTime = dateTime.AddHours(-dateTime.Hour);
             dateTime = dateTime.AddMinutes(-dateTime.Minute);
             dateTime = dateTime.AddSeconds(-dateTime.Second);
             dateTime = dateTime.AddMilliseconds(-dateTime.Millisecond);

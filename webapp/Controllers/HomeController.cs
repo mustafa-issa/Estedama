@@ -103,6 +103,24 @@ namespace ChartsMix.Controllers
             }
         }
 
+        public async Task<ActionResult> GetComperisonChart(ComparisonChartModel model)
+        {
+            try
+            {
+                db = new ChartsDatabaseManager();
+                var response = new LineChartDataModel();
+                var details = new ChartDetails();
+                response.Result = await db.GetComparisonChart(details, model.From, model.To, model.period, model.Ids);
+                response.Details = details;
+                FillSummary(response);
+                return Json(response, JsonRequestBehavior.AllowGet);
+            }
+            catch (Exception ex)
+            {
+                return Json(ex, JsonRequestBehavior.AllowGet);
+            }
+        }
+
         public async Task<ActionResult> GetGroupChart(GroupModel model)
         {
             try
@@ -128,6 +146,7 @@ namespace ChartsMix.Controllers
                 model.lineChartModel.TreeRoot = meter;
                 model.barChartModel.TreeRoot = meter;
                 model.pieGroupChartModel.Group.TreeRoot = meter;
+                model.comparisonChartModel.TreeRoot = meter;
             }
             catch(Exception ex)
             {
