@@ -94,7 +94,9 @@ namespace ChartsMix.Models
                     throw ex;
                 }
             }
-            returnVal.AverageConsumption = returnVal.AverageConsumption / counter;
+            returnVal.MaxConsumption = Math.Round(returnVal.MaxConsumption, 2);
+            returnVal.MinConsumption = Math.Round(returnVal.MinConsumption, 2);
+            returnVal.AverageConsumption = Math.Round((returnVal.AverageConsumption / counter) , 2);
             returnVal.Data = result;
             return returnVal;
         }
@@ -367,7 +369,7 @@ namespace ChartsMix.Models
                         {
                             dataResult.Add(new LineSeriesData
                             {
-                                Y = Math.Max(0, queryResult[i].value - queryResult[i + 1].value)
+                                Y = Math.Round(Math.Max(0, queryResult[i].value - queryResult[i + 1].value), 2)
                             });
                         }
                         dataResult.Reverse();

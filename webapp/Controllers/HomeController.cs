@@ -68,6 +68,7 @@ namespace ChartsMix.Controllers
 
         private void FillSummary(LineChartDataModel response)
         {
+            
             response.MaxConsumption = double.MinValue;
             response.MinConsumption = double.MaxValue;
             var counter = 0;
@@ -82,7 +83,9 @@ namespace ChartsMix.Controllers
                     counter++;
                 }
             }
-            response.AverageCunsumption = (sum / counter);
+            response.MaxConsumption = Math.Round(response.MaxConsumption, 2);
+            response.MinConsumption = Math.Round(response.MinConsumption, 2);
+            response.AverageCunsumption = Math.Round((sum / counter), 2);
         }
 
         public async Task<ActionResult> GetBarChart(BarChartModel model)

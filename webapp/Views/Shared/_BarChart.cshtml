@@ -8,14 +8,18 @@
     <div class="jarviswidget-editbox">
         <div class="widget-body">
             <div class="row">
-                <div class="col-md-3 form-group">
+                <div class="col-md-4 form-group">
                     @Html.EnumDropDownListFor(m => m.period, "Period", new { @class = "form-control", @id = "ddlBar" })
                 </div>
-                <div class="col-md-3 form-group">
+                <div class="col-md-4 form-group">
                     <input type="text" class="form-control" id="tbBarValue" name="StandardValue" placeholder="Standard Value" />
                 </div>
+                <div class="col-md-4 form-group">
+                    <section>
+                        <label style="float : right;" class="inline-block checkbox"><input type="checkbox" checked="checked" name="defaultColors" id="chkBar"><i></i>Default Colors</label>
+                    </section>
+                </div>
             </div>
-
             <div class="row" id="divDateBar" style="display : none">
                 <div class="col-md-3 form-group">
                     @Html.EditorFor(m => m.From)
@@ -36,20 +40,7 @@
     </div>
     }
     <div class="widget-body">
-        <div id="barChartSummary" class="hidden col-md-6">
-            <table class="table">
-                <tr>
-                    <td>Maximum Consumption</td>
-                    <td>Minimum Consumption</td>
-                    <td>Average Consumption</td>
-                </tr>
-                <tr>
-                    <td><span id="barChartMax"></span></td>
-                    <td><span id="barChartMin"></span></td>
-                    <td><span id="barChartAvg"></span></td>
-                </tr>
-            </table>
-        </div>
+        
         <div id="barChart"></div>
     </div>
 </div>
@@ -62,9 +53,19 @@
         model.To = dateFormat($('#barChartModel_To').val());
         model.Ids = [];
         model.StandardValue = $('#tbBarValue').val();
-        $('input[name=barIds]:checked').each(function () {
-            model.Ids.push($(this).attr('value'));
-        });
+        var colors = [];
+        if ($('#chkBar').is(":checked")) {
+            $('input[name=barIds]:checked').each(function () {
+                model.Ids.push($(this).attr('value'));
+            });
+            colors = ['#7cb5ec', '#434348', '#90ed7d', '#f7a35c', '#8085e9', '#f15c80', '#e4d354', '#2b908f', '#f45b5b', '#91e8e1'];
+        }
+        else {
+            $('input[name=barIds]:checked').each(function () {
+                model.Ids.push($(this).attr('value'));
+                colors.push($(this).attr('color'));
+            });
+        }
         $.ajax({
             type: "GET",
             contentType: "application/json; charset=utf-8",
@@ -103,7 +104,7 @@
                         }
                     });
                 }
-                DrawBarChart(arr, data.Details, plotValue, data.MaxConsumption, data.MinConsumption, data.AverageCunsumption);
+                DrawBarChart(arr, colors, data.Details, plotValue, data.MaxConsumption, data.MinConsumption, data.AverageCunsumption);
                 if (popup != "")
                 {
                     messageFailure(popup);
@@ -115,13 +116,30 @@
             }
         });
     }
-    function DrawBarChart(data, info, plotValue,max,min,avg) {
+    function DrawBarChart(data, colors, info, plotValue, max, min, avg) {
         $('#barChartSummary').removeClass('hidden');
         $('#barChartMax').text(Math.round(max));
         $('#barChartMin').text(Math.round(min));
         $('#barChartAvg').text(Math.round(avg));
+        max = max;
+        min = min;
+        avg = avg;
         Highcharts.chart('barChart', {
+            exporting: {
+                fallbackToExportServer: false,
+                allowHTML: true
+            },
+            credits: {
+                enabled: false,
+                text: "ChartsMix.com",
+                href: "http://www.chartsmix.com"
+            },
+            colors: colors,
             chart: {
+                spacingBottom: 70,
+                spacingTop: 0,
+                spacingLeft: 10,
+                spacingRight: 10,
                 type: 'column'
             },
             title: {
@@ -153,6 +171,12 @@
                 }
             },
             series: data
+        }, function (chart) {
+
+            chart.renderer.html('<style>table {width : 100%; border-collapse : collapse;} td, th {font-family : "Lucida Grande", "Lucida Sans Unicode", Arial, Helvetica, sans-serif; white-space : nowrap; font-size : 12px; padding: 8px 10px;border-top : 1px solid #ddd;}</style><table id="barTable" class="table table-hover"> <tr><th>Maximum</th><th>Minimum</th><th>Average</th></tr><tr><td>' + max + '</td><td>' + min + '</td><td>' + avg + '</td></tr></table>'
+                , 10, $('#barChart').height() - 50)
+                .add();
+            $('#barTable').parent().css({ "width": "100%" });
         });
     }
 

@@ -57,6 +57,7 @@
         $('#chkPie').change(function () {
             $('input[name=pieIds]:checked').each(function () {
                 $(this).removeAttr('checked');
+                $(this).siblings().css('background-color', '');
             });
         });
 
@@ -70,11 +71,30 @@
                     checkbox.siblings().css('background-color', '');
             }
         });
-        $('#lineIds').change(function () {
+        $('#chkLine').change(function () {
             $('input[name=lineIds]:checked').each(function () {
                 $(this).removeAttr('checked');
+                $(this).siblings().css('background-color', '');
             });
         });
+
+        $('[name=barIds]').change(function () {
+            if (!$('#chkBar').is(":checked")) {
+                if ($(this).is(":checked")) {
+                    checkbox = $(this);
+                    $('#color').click();
+                }
+                else
+                    checkbox.siblings().css('background-color', '');
+            }
+        });
+        $('#chkBar').change(function () {
+            $('input[name=barIds]:checked').each(function () {
+                $(this).removeAttr('checked');
+                $(this).siblings().css('background-color', '');
+            });
+        });
+
     });
 </script>
 

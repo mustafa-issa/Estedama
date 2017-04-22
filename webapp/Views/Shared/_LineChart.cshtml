@@ -37,20 +37,7 @@
         </div>
     }
     <div class="widget-body">
-        <div id="lineChartSummary" class="hidden col-md-6">
-            <table class="table">
-                <tr>
-                    <td>Maximum Consumption</td>
-                    <td>Minimum Consumption</td>
-                    <td>Average Consumption</td>
-                </tr>
-                <tr>
-                    <td><span id="lineChartMax"></span></td>
-                    <td><span id="lineChartMin"></span></td>
-                    <td><span id="lineChartAvg"></span></td>
-                </tr>
-            </table>
-        </div>
+        
         <div id="lineChart"></div>
     </div>
 </div>
@@ -137,6 +124,10 @@
             },
             colors: colors,
             chart: {
+                spacingBottom: 70,
+                spacingTop: 0,
+                spacingLeft: 10,
+                spacingRight: 10,
                 type: 'line'
             },
             title: {
@@ -168,6 +159,12 @@
                 }
             },
             series: data
+        }, function (chart) {
+
+            chart.renderer.html('<style>table {width : 100%; border-collapse : collapse;} td, th {font-family : "Lucida Grande", "Lucida Sans Unicode", Arial, Helvetica, sans-serif; white-space : nowrap; font-size : 12px; padding: 8px 10px;border-top : 1px solid #ddd;}</style><table id="lineTable" class="table table-hover"> <tr><th>Maximum</th><th>Minimum</th><th>Average</th></tr><tr><td>' + max + '</td><td>' + min + '</td><td>' + avg + '</td></tr></table>'
+                , 10, $('#lineChart').height() - 50)
+                .add();
+            $('#lineTable').parent().css({ "width": "100%" });
         });
     }
 
