@@ -2,6 +2,7 @@
 using System;
 using System.Collections.Generic;
 using System.Configuration;
+using System.Data;
 using System.Data.SqlClient;
 using System.Linq;
 using System.Threading.Tasks;
@@ -69,8 +70,12 @@ namespace ChartsMix.Models
                         command.Parameters.Add(new SqlParameter("@From", fromDate));
                         command.Parameters.Add(new SqlParameter("@To", toDate));
 
-                        command.CommandType = System.Data.CommandType.StoredProcedure;
-                        command.CommandText = "Get_Pie3D_Chart";
+                        command.CommandType = System.Data.CommandType.Text;
+                        command.CommandText = @"SELECT Name, round((max(ltv.FloatVALUE) - min(ltv.FloatVALUE)),2) as FloatVALUE 
+	                                            FROM tbLogTimeValues ltv
+	                                            LEFT JOIN tbTrendLogRelation tlr  ON ltv.ParentID = tlr.EntityID 
+                                                WHERE tlr.EntityID = @Id AND ltv.DateTimeStamp BETWEEN @From AND @To
+	                                            group by Name";
                         await connection.OpenAsync();
                         using (SqlDataReader reader = await command.ExecuteReaderAsync())
                         {
@@ -324,8 +329,50 @@ namespace ChartsMix.Models
                     {
                         var command = new SqlCommand();
                         command.Connection = connection;
-                        command.CommandType = System.Data.CommandType.StoredProcedure;
-                        command.CommandText = "Bar_Chart_Meter";
+                        command.CommandType = System.Data.CommandType.Text;
+                        command.CommandText = @"if @Period = 1
+
+                                            begin
+                                            SELECT Name , EntityID, round(ltv.FloatVALUE, 2) as FloatVALUE ,DateTimeStamp
+                                            FROM tbLogTimeValues ltv
+
+                                            LEFT JOIN tbTrendLogRelation tlr  ON ltv.ParentID = tlr.EntityID
+                                            WHERE EntityId = @Id AND DateTimeStamp BETWEEN @From AND @To
+
+                                            order by Name, DateTimeStamp desc
+
+                                            end
+
+
+                                            if @Period = 2
+
+                                            begin
+                                            SELECT Name , max(EntityID) as entityID, round(max(ltv.FloatVALUE), 2) as FloatVALUE ,max(DateTimeStamp) AS 'DateTimeStamp'
+
+                                            FROM tbLogTimeValues ltv
+                                            LEFT JOIN tbTrendLogRelation tlr ON ltv.ParentID = tlr.EntityID
+                                            WHERE EntityId = @Id AND DateTimeStamp BETWEEN @From AND @To
+
+                                            GROUP BY tlr.Name,tlr.EntityID, dateadd(DAY, 0, datediff(day, 0, ltv.DateTimeStamp))
+
+                                            order by Name, DateTimeStamp desc
+
+                                            end
+
+                                            if @Period = 3
+
+                                            begin
+                                            SELECT Name , max(EntityID) as entityID, round(max(ltv.FloatVALUE), 2) as FloatVALUE ,max(DateTimeStamp) AS 'DateTimeStamp'
+
+                                            FROM tbLogTimeValues ltv
+                                            LEFT JOIN tbTrendLogRelation tlr ON ltv.ParentID = tlr.EntityID
+                                            WHERE EntityId = @Id AND DateTimeStamp BETWEEN @From AND @To
+
+                                            GROUP BY tlr.Name,tlr.EntityID, DATEPART(YEAR, DateTimeStamp),DATEPART(month, DateTimeStamp)
+
+                                            order by Name, DateTimeStamp desc
+
+                                            end";
 
                         command.Parameters.Add(new SqlParameter("@Id", meterId));
                         command.Parameters.Add(new SqlParameter("@From", From));
@@ -395,7 +442,7 @@ namespace ChartsMix.Models
 
         public async Task<List<CustomLineSeries>> GetComparisonChart(ChartDetails details, DateTime periodOne, DateTime periodTwo, PiePeriod period, int[] ids)
         {
-             List<CustomLineSeries> result = new List<CustomLineSeries>();
+            List<CustomLineSeries> result = new List<CustomLineSeries>();
 
             var query = "";
             DateTime from = DateTime.Now, from2 = DateTime.Now, to = DateTime.Now, to2 = DateTime.Now;
@@ -416,30 +463,50 @@ namespace ChartsMix.Models
                     to = CleanDateTimeHours(periodOne).AddDays(1).AddMilliseconds(-1);
                     from2 = CleanDateTimeHours(periodTwo).AddHours(-1);
                     to2 = CleanDateTimeHours(periodTwo).AddDays(1).AddMilliseconds(-1);
+                    details.Dates.Add(from.ToShortDateString());
+                    details.Dates.Add(from2.ToShortDateString());
+                    details.Title = "Comparison based on weeks";
+                    details.SubTitle = string.Format("{0} - {1}", from.ToShortDateString(), from2.ToShortDateString());
                     break;
                 case PiePeriod.Month:
                     from = CleanDateTimeMonths(periodOne).AddHours(-1);
-                    to = CleanDateTimeMonths(periodOne).AddDays(1).AddMilliseconds(-1);
+                    to = CleanDateTimeMonths(periodOne.AddMonths(1)).AddMilliseconds(-1); // CleanDateTimeMonths(periodOne).AddDays(1).AddMilliseconds(-1);
                     from2 = CleanDateTimeMonths(periodTwo).AddHours(-1);
-                    to2 = CleanDateTimeMonths(periodTwo).AddDays(1).AddMilliseconds(-1);
+                    to2 = CleanDateTimeMonths(periodTwo.AddMonths(1)).AddMilliseconds(-1); //CleanDateTimeMonths(periodTwo).AddDays(1).AddMilliseconds(-1);
+                    details.Dates.Add(from.ToShortDateString());
+                    details.Dates.Add(from2.ToShortDateString());
+                    details.Title = "Comparison based on months";
+                    details.SubTitle = string.Format("{0} - {1}", from.ToShortDateString(), from2.ToShortDateString());
                     break;
                 case PiePeriod.Year:
-                    from = CleanDateTimeHours(periodOne).AddHours(-1);
-                    to = CleanDateTimeHours(periodOne).AddDays(1).AddMilliseconds(-1);
-                    from2 = CleanDateTimeHours(periodTwo).AddHours(-1);
-                    to2 = CleanDateTimeHours(periodTwo).AddDays(1).AddMilliseconds(-1);
+                    from = CleanDateTimeYear(periodOne).AddHours(-1);
+                    to = CleanDateTimeYear(periodOne.AddYears(1)).AddMilliseconds(-1); //CleanDateTimeHours(periodOne).AddDays(1).AddMilliseconds(-1);
+                    from2 = CleanDateTimeYear(periodTwo).AddHours(-1);
+                    to2 = CleanDateTimeYear(periodTwo.AddYears(1)).AddMilliseconds(-1); //CleanDateTimeHours(periodTwo).AddDays(1).AddMilliseconds(-1);
+                    details.Dates.Add(from.ToShortDateString());
+                    details.Dates.Add(from2.ToShortDateString());
+                    details.Title = "Comparison based on Years";
+                    details.SubTitle = string.Format("{0} - {1}", from.ToShortDateString(), from2.ToShortDateString());
                     break;
                 case PiePeriod.Custom:
                     from = CleanDateTimeHours(periodOne).AddHours(-1);
                     to = CleanDateTimeHours(periodOne).AddDays(1).AddMilliseconds(-1);
                     from2 = CleanDateTimeHours(periodTwo).AddHours(-1);
                     to2 = CleanDateTimeHours(periodTwo).AddDays(1).AddMilliseconds(-1);
+                    details.Dates.Add(from.ToShortDateString());
+                    details.Dates.Add(from2.ToShortDateString());
+                    details.Title = "Comparison based on custom";
+                    details.SubTitle = string.Format("{0} - {1}", from.ToShortDateString(), from2.ToShortDateString());
                     break;
                 default:
                     from = CleanDateTimeHours(periodOne).AddHours(-1);
                     to = CleanDateTimeHours(periodOne).AddDays(1).AddMilliseconds(-1);
                     from2 = CleanDateTimeHours(periodTwo).AddHours(-1);
                     to2 = CleanDateTimeHours(periodTwo).AddDays(1).AddMilliseconds(-1);
+                    details.Dates.Add(from.ToShortDateString());
+                    details.Dates.Add(from2.ToShortDateString());
+                    details.Title = "Comparison based on lolz";
+                    details.SubTitle = string.Format("{0} - {1}", from.ToShortDateString(), from2.ToShortDateString());
                     break;
             }
 
@@ -448,7 +515,7 @@ namespace ChartsMix.Models
 	                            LEFT JOIN tbTrendLogRelation tlr  ON ltv.ParentID = tlr.EntityID 
                                 WHERE EntityId = @id AND DateTimeStamp BETWEEN @From AND @To group by Name";
             int i = 0;
-            foreach(var id in ids)
+            foreach (var id in ids)
             {
                 var queryResult = new List<LineSeriesData>();
                 using (var connection = new SqlConnection(_connectionString))
@@ -631,6 +698,7 @@ namespace ChartsMix.Models
 
         private DateTime CleanDateTimeYear(DateTime dateTime)
         {
+            dateTime = dateTime.AddMonths(-dateTime.Month);
             dateTime = dateTime.AddDays(-dateTime.Day);
             return CleanDateTimeWeek(dateTime);
         }
@@ -744,6 +812,52 @@ namespace ChartsMix.Models
                     await connection.OpenAsync();
                     await command.ExecuteScalarAsync();
                 }
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
+        }
+
+        public TableModel GetTable(int EntityId, DateTime DateFrom, DateTime DateTo)
+        {
+            var queryResult = new List<TableValues>();
+            var result = new TableModel();
+            try
+            {
+                SqlConnection connection = new SqlConnection(_connectionString);
+                var command = new SqlCommand();
+                command.Connection = connection;
+                command.CommandType = CommandType.Text;
+                command.CommandText = @"select  d.FloatVALUE as FloatVALUE, e.FloatVALUE as prevValue, d.FloatVALUE - e.FloatVALUE as Consumption, d.DateTimeStamp from (select ROW_NUMBER() OVER(ORDER BY DateTimeStamp) as row , tbLogTimeValues.* from tbLogTimeValues
+                                        where ParentID = @EntityId
+                                        and DateTimestamp between @DateFrom and @DateTo) d
+                                        left join
+                                        (select ROW_NUMBER() OVER(ORDER BY DateTimeStamp) as row , tbLogTimeValues.* from tbLogTimeValues
+                                        where ParentID = @EntityId
+                                        and DateTimestamp between @DateFrom and @DateTo) e
+                                        on d.ParentID = e.ParentID
+                                        and e.row = d.row - 1";
+                command.Parameters.AddWithValue("@EntityId", EntityId);
+                command.Parameters.AddWithValue("@DateFrom", DateFrom);
+                command.Parameters.AddWithValue("@DateTo", DateTo);
+                connection.Open();
+
+                using (var reader = command.ExecuteReader())
+                {
+                    while (reader.Read())
+                    {
+                        queryResult.Add(new TableValues
+                        {
+                            Value = GetValue<double>(reader["FloatVALUE"], 0.0),
+                            Date = GetValue<DateTime>(reader["DateTimeStamp"], DateTime.MinValue).ToString("dd/MM/yyyy HH:mm:ss"),
+                            PreviousValue = GetValue<double>(reader["prevValue"], 0.0),
+                            Consumption = GetValue<double>(reader["Consumption"], 0.0)
+                        });
+                    }
+                }
+                result.values = queryResult;
+                return result;
             }
             catch (Exception ex)
             {

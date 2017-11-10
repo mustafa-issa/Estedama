@@ -37,6 +37,12 @@
 
 <script>
     $(document).ready(function () {
+        var responsiveHelper_datatable_tabletools = undefined;
+
+        
+
+
+
         var checkbox;
         pageSetUp();
         drawBreadCrumb();
@@ -93,6 +99,14 @@
                 $(this).removeAttr('checked');
                 $(this).siblings().css('background-color', '');
             });
+        });
+
+        $('input[name=tableIds]').change(function () {
+            checkbox = $(this);
+            $('input[name=tableIds]:checked').each(function () {
+                $(this).removeAttr('checked');
+            });
+            checkbox.prop('checked', true);
         });
 
     });

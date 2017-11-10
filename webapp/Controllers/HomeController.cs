@@ -9,6 +9,7 @@ using Newtonsoft.Json;
 using System.Web.Script.Serialization;
 using System.Threading.Tasks;
 using System;
+using System.Data;
 
 namespace ChartsMix.Controllers
 {
@@ -150,6 +151,7 @@ namespace ChartsMix.Controllers
                 model.barChartModel.TreeRoot = meter;
                 model.pieGroupChartModel.Group.TreeRoot = meter;
                 model.comparisonChartModel.TreeRoot = meter;
+                model.tableModel.TreeRoot = meter;
             }
             catch(Exception ex)
             {
@@ -176,6 +178,14 @@ namespace ChartsMix.Controllers
             db = new ChartsDatabaseManager();
             var response = new LineChartDataModel();
             var dates = new List<string>();
+            return Json(response, JsonRequestBehavior.AllowGet);
+        }
+
+        public ActionResult GetTable(TableModel tableModel)
+        {
+            db = new ChartsDatabaseManager();
+            var response = new TableModel();
+            response = db.GetTable(tableModel.Id, tableModel.From, tableModel.To);
             return Json(response, JsonRequestBehavior.AllowGet);
         }
     }

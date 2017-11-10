@@ -99,16 +99,33 @@
             <article class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
                 <div class="jarviswidget" id="lineChartWidget">
                     <header>
-                        <span class="widget-icon"> <i class="fa fa-bar-chart-o"></i> </span>
+                        <span class="widget-icon"> <i class="fa fa-line-chart"></i> </span>
                         <h2>Line Chart</h2>
                     </header>
                     @Html.Partial("_LineChart", Model.lineChartModel, new ViewDataDictionary { TemplateInfo = new TemplateInfo { HtmlFieldPrefix = "lineChartModel" } })
+                </div>
+            </article>
+        </div>
+                <!-- end widget -->
+
+            
+            <!-- WIDGET END -->
+
+        <div class="row">
+            <article class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
+                <div class="jarviswidget" id="tableWidget">
+                    <header>
+                        <span class="widget-icon"> <i class="fa fa-table"></i> </span>
+                        <h2>Table</h2>
+                    </header>
+                    @Html.Partial("_Table", Model.tableModel, new ViewDataDictionary { TemplateInfo = new TemplateInfo { HtmlFieldPrefix = "tableModel" } })
 
                 </div>
                 <!-- end widget -->
 
             </article>
-            <!-- WIDGET END -->
+
+
 
         </div>
         <div class="row">
@@ -177,9 +194,33 @@
             }
         });
 
+        $('#ddlPeriodBar').change(function () {
+            if ($('#ddlPeriodBar').val() == 1) {
+                $('.form_datetime').datetimepicker({
+                    viewMode: 'YEARS',
+                    format: 'MM/YYYY'
+                });
+            }
+            if ($('#ddlPeriodBar').val() == 4) {
+               
+            }
+        });
+        
         $(document).ready(function () {
+            
+            $('#divPeriodCompare .form_datetime').datetimepicker({
+                weekStart: 1,
+                todayBtn: 1,
+                autoclose: 1,
+                todayHighlight: 1,
+                startView: 3,
+                forceParse: 0,
+                showMeridian: 1,
+                minView: 3,
+                viewSelect: 'decade'
+            });
+
             $('.form_datetime').datetimepicker({
-                //language:  'fr',
                 weekStart: 1,
                 todayBtn: 1,
                 autoclose: 1,
@@ -188,6 +229,7 @@
                 forceParse: 0,
                 showMeridian: 1
             });
+
             // PAGE RELATED SCRIPTS  
 
             $('#pie3dChartWidget a[data-original-title~=Edit] i').on("click", function () {
